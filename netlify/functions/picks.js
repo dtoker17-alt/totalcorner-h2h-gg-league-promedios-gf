@@ -169,13 +169,20 @@ async function fetchEvent(id, token) {
 }
 
 async function readHistory() {
-  const store = getStore("football-real-analytics");
+  const store = picksStore();
   return (await store.get(HISTORY_KEY, { type: "json" })) || [];
 }
 
 async function writeHistory(picks) {
-  const store = getStore("football-real-analytics");
+  const store = picksStore();
   await store.setJSON(HISTORY_KEY, picks);
+}
+
+function picksStore() {
+  const siteID = process.env.BLOBS_SITE_ID || process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+  const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+  if (siteID && token) return getStore({ name: "football-real-analytics", siteID, token });
+  return getStore("football-real-analytics");
 }
 
 function slimEvent(event) {

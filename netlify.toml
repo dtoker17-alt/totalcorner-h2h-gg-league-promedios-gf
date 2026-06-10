@@ -9,3 +9,8 @@
   from = "/api/refresh"
   to = "/.netlify/functions/refresh"
   status = 200
+
+[[redirects]]
+  from = "/api/bzzoiro"
+  to = "/.netlify/functions/bzzoiro"
+  status = 200

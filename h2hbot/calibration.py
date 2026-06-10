@@ -43,9 +43,15 @@ def _passes_precision(pick: MatchPick, performance: dict[tuple[str, str], dict[s
         if pick.best_market != "Over/Under 2.5":
             return False, "h2hgg solo ou"
         if pick.best_pick == "Over 2.5":
-            return (pick.goal_trend_score >= 76 and pick.value_score >= 72, "over h2h no extremo")
+            return (
+                pick.goal_trend_score >= 88
+                and pick.p_over25 >= 0.78
+                and pick.p_under25 <= 0.22
+                and pick.value_score >= 88,
+                "h2h over solo extremo por historial",
+            )
         if pick.best_pick == "Under 2.5":
-            return (pick.goal_trend_score <= 28 and pick.value_score >= 68 and not pick.false_over_alert, "under h2h no extremo")
+            return False, "under h2h bloqueado por historial"
         return False, "h2hgg mercado no valido"
 
     if pick.market_mode == "1x2_only" and pick.best_market != "1X2":
@@ -53,7 +59,13 @@ def _passes_precision(pick: MatchPick, performance: dict[tuple[str, str], dict[s
 
     if pick.best_market == "1X2":
         edge = abs(pick.winner_score_home - pick.winner_score_away)
-        return (edge >= 18 and pick.draw_risk_score < 58 and pick.value_score >= 68, "1x2 sin edge")
+        return (
+            edge >= 20
+            and pick.draw_risk_score < 45
+            and pick.value_score >= 70
+            and max(pick.p_home, pick.p_away) >= 0.55,
+            "1x2 sin edge premium",
+        )
 
     return False, "mercado desconocido"
 

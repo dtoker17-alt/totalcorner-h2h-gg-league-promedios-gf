@@ -714,13 +714,8 @@ def _recommendation_candidates(
     candidates: list[tuple[str, str, float, float]] = []
 
     if market_mode == "ou_only":
-        if goal_trend_score >= 72:
+        if goal_trend_score >= 82 and p_over25 >= 0.72:
             candidates.append(("Over/Under 2.5", "Over 2.5", p_over25, goal_trend_score - quality_penalty))
-        elif goal_trend_score >= 60:
-            candidates.append(("Over/Under 2.5", "Over 2.5 moderado", p_over25, goal_trend_score - 8 - quality_penalty))
-        elif goal_trend_score < 45:
-            under_prob = 1 - p_over25
-            candidates.append(("Over/Under 2.5", "Under 2.5", under_prob, (100 - goal_trend_score) - quality_penalty))
         else:
             candidates.append(("Over/Under 2.5", "No Bet O/U 2.5", max(p_over25, 1 - p_over25), 35 - quality_penalty))
 

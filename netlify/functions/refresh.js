@@ -114,11 +114,13 @@ function analyze(f, stats) {
   const probs = winnerProbabilities(edge, drawRisk);
   let best_market = "No Bet", best_pick = "No Bet precision", prob = Math.max(pOver25, 1-pOver25), value = 34, confidence = "Baja";
   if (f.market_mode === "ou_only") {
-    if (goalTrend >= 76) [best_market,best_pick,prob,value,confidence] = ["Over/Under 2.5","Over 2.5",pOver25,goalTrend,"Alta"];
-    else if (goalTrend <= 28) [best_market,best_pick,prob,value,confidence] = ["Over/Under 2.5","Under 2.5",1-pOver25,100-goalTrend,"Alta"];
+    if (goalTrend >= 88 && pOver25 >= .78) [best_market,best_pick,prob,value,confidence] = ["Over/Under 2.5","Over 2.5",pOver25,goalTrend,"Alta"];
   } else {
     if (edge >= 18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Local gana",probs.home,50+edge,"Alta"];
     if (edge <= -18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Visita gana",probs.away,50-edge,"Alta"];
+    if (best_market === "1X2" && (Math.abs(edge) < 20 || drawRisk >= 45 || Math.max(probs.home, probs.away) < .55 || value < 70)) {
+      [best_market,best_pick,prob,value,confidence] = ["No Bet","No Bet precision",Math.max(probs.home,probs.draw,probs.away),34,"Baja"];
+    }
   }
   return { ...f, best_market, best_pick, best_probability: prob, value_score: Math.round(value*10)/10, confidence, expected_goals: round1(total), probability_home: round3(probs.home), probability_draw: round3(probs.draw), probability_away: round3(probs.away), probability_over15: round3(pOver15), probability_over25: round3(pOver25), probability_under25: round3(1-pOver25), goal_trend_score: round1(goalTrend), winner_score_home: round1(homePower), winner_score_away: round1(awayPower), draw_risk_score: round1(drawRisk), home_stats: publicStats(h), away_stats: publicStats(a), risk: best_pick.startsWith("No Bet") ? "filtrado precision" : "controlado", argument: `${h.player} ${h.gf}GF/${h.ga}GA vs ${a.player} ${a.gf}GF/${a.ga}GA. Modelo sin cuotas; ranking por edge estadistico.` };
 }

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eSoccer Picks</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101214;--panel:#191d20;--line:#313940;--text:#f4f5f2;--muted:#a9b0b5;--green:#2fd17c;--red:#ff6b6b;--blue:#65b7ff}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,sans-serif}.app{max-width:960px;margin:0 auto;padding:12px}
+    header{position:sticky;top:0;background:#101214f5;border-bottom:1px solid var(--line);padding:12px;margin:-12px -12px 12px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    h1{margin:0;font-size:20px}.sub{color:var(--muted);font-size:12px;margin-top:4px}button{border:0;border-radius:8px;background:var(--green);color:#06110b;font-weight:800;padding:12px 14px}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.metric,.card,.sources{background:var(--panel);border:1px solid var(--line);border-radius:8px}.metric{padding:10px}.metric b{display:block;font-size:18px}.metric span,.meta,.notes{color:var(--muted);font-size:12px}
+    .sources{padding:10px;margin-bottom:10px;font-size:12px;line-height:1.4}.list{display:grid;gap:10px}.card{overflow:hidden}.head{display:flex;justify-content:space-between;gap:8px;padding:12px;border-bottom:1px solid var(--line)}
+    .match{font-size:16px;font-weight:900}.badge{white-space:nowrap;border-radius:999px;padding:6px 9px;background:var(--green);color:#06110b;font-size:12px;font-weight:900}.badge.low{background:var(--red);color:#250707}
+    .best{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#20262a}.pick{font-size:18px;font-weight:900}.value{font-size:18px;color:var(--green);font-weight:900}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:10px 12px}.chip{border:1px solid var(--line);border-radius:8px;padding:8px}.chip b{display:block;color:var(--muted);font-size:11px}.chip span{font-weight:900;color:var(--blue)}
+    .notes{padding:0 12px 12px;line-height:1.4}.empty{text-align:center;color:var(--muted);padding:40px 12px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header><div class="top"><div><h1>eSoccer Picks</h1><div class="sub" id="updated">Sin actualizar</div></div><button id="refresh">Actualizar</button></div></header>
+    <section class="metrics">
+      <div class="metric"><b id="fixtures">0</b><span>Partidos</span></div>
+      <div class="metric"><b id="strong">0</b><span>Picks fuertes</span></div>
+      <div class="metric"><b id="top">0</b><span>Mejor value</span></div>
+    </section>
+    <div class="sources" id="sources">Fuentes pendientes.</div>
+    <main class="list" id="list"><div class="empty">Pulsa actualizar.</div></main>
+  </div>
+  <script>
+    const $ = id => document.getElementById(id);
+    const pct = n => `${Math.round((n || 0) * 100)}%`;
+    $('refresh').onclick = load;
+    window.onload = load;
+    async function load(){
+      $('refresh').disabled=true;$('refresh').textContent='Actualizando...';
+      try{
+        const data=await fetch('/api/refresh',{cache:'no-store'}).then(r=>r.json());
+        $('updated').textContent=`Actualizado ${new Date(data.updated_at).toLocaleString()}`;
+        $('fixtures').textContent=data.fixture_count;
+        const strong=data.matches.filter(m=>!String(m.best_pick).startsWith('No Bet'));
+        $('strong').textContent=strong.length;
+        $('top').textContent=data.matches.length?Math.round(data.matches[0].value_score||0):0;
+        $('sources').innerHTML=`<b>Modo:</b> ${esc(data.mode)}<br><b>Regla:</b> H2H GG solo O/U; GT/Battle/Volta solo 1X2`;
+        $('list').innerHTML=data.matches.length?data.matches.map(card).join(''):'<div class="empty">Sin datos suficientes.</div>';
+      }catch(e){$('list').innerHTML=`<div class="empty">Error: ${esc(e)}</div>`}
+      finally{$('refresh').disabled=false;$('refresh').textContent='Actualizar'}
+    }
+    function card(m){
+      return `<article class="card"><div class="head"><div><div class="match">${esc(m.home_player)} vs ${esc(m.away_player)}</div><div class="meta">${esc(m.league)} - ${m.time}</div></div><div class="badge ${m.confidence==='Baja'?'low':''}">${esc(m.confidence)}</div></div><div class="best"><div><div class="meta">${esc(m.best_market)}</div><div class="pick">${esc(m.best_pick)}</div></div><div class="value">${Math.round(m.value_score||0)}</div></div><div class="grid"><div class="chip"><b>Power local</b><span>${num(m.winner_score_home)}</span></div><div class="chip"><b>Power visita</b><span>${num(m.winner_score_away)}</span></div><div class="chip"><b>Draw risk</b><span>${num(m.draw_risk_score)}</span></div><div class="chip"><b>Goal trend</b><span>${num(m.goal_trend_score)}</span></div></div><div class="notes"><b>Riesgo:</b> ${esc(m.risk)}</div><div class="notes">${esc(m.argument)}</div></article>`
+    }
+    function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+    function num(n){return Number(n||0).toFixed(1)}
+  </script>
+</body>
+</html>

@@ -59,7 +59,7 @@ async function savePick(event) {
   };
   const next = existing ? picks.map((item) => (item.id === id ? { ...item, ...record } : item)) : [record, ...picks];
   await writeHistory(next.slice(0, 500));
-  return { saved: true, pick: record, summary: summarize(next) };
+  return { saved: true, pick: record, picks: next, summary: summarize(next) };
 }
 
 async function settlePicks() {

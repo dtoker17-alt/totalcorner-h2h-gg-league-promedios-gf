@@ -2,56 +2,170 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>eSoccer Picks</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>eSoccer Analytics</title>
   <style>
-    :root{color-scheme:dark;--bg:#101214;--panel:#191d20;--line:#313940;--text:#f4f5f2;--muted:#a9b0b5;--green:#2fd17c;--red:#ff6b6b;--blue:#65b7ff}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,sans-serif}.app{max-width:960px;margin:0 auto;padding:12px}
-    header{position:sticky;top:0;background:#101214f5;border-bottom:1px solid var(--line);padding:12px;margin:-12px -12px 12px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between}
-    h1{margin:0;font-size:20px}.sub{color:var(--muted);font-size:12px;margin-top:4px}button{border:0;border-radius:8px;background:var(--green);color:#06110b;font-weight:800;padding:12px 14px}
-    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.metric,.card,.sources{background:var(--panel);border:1px solid var(--line);border-radius:8px}.metric{padding:10px}.metric b{display:block;font-size:18px}.metric span,.meta,.notes{color:var(--muted);font-size:12px}
-    .sources{padding:10px;margin-bottom:10px;font-size:12px;line-height:1.4}.list{display:grid;gap:10px}.card{overflow:hidden}.head{display:flex;justify-content:space-between;gap:8px;padding:12px;border-bottom:1px solid var(--line)}
-    .match{font-size:16px;font-weight:900}.badge{white-space:nowrap;border-radius:999px;padding:6px 9px;background:var(--green);color:#06110b;font-size:12px;font-weight:900}.badge.low{background:var(--red);color:#250707}
-    .best{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#20262a}.pick{font-size:18px;font-weight:900}.value{font-size:18px;color:var(--green);font-weight:900}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:10px 12px}.chip{border:1px solid var(--line);border-radius:8px;padding:8px}.chip b{display:block;color:var(--muted);font-size:11px}.chip span{font-weight:900;color:var(--blue)}
-    .notes{padding:0 12px 12px;line-height:1.4}.empty{text-align:center;color:var(--muted);padding:40px 12px}
+    :root{color-scheme:dark;--bg:#090b12;--panel:#111522;--panel2:#171c2d;--line:#283044;--soft:#202842;--text:#f7f8fb;--muted:#929bb1;--green:#28e59a;--yellow:#ffd75d;--red:#ff6177;--blue:#69b7ff;--purple:#a783ff;--cyan:#40e0d0}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden;background:radial-gradient(circle at 25% 0,#16253b 0,#090b12 34rem);color:var(--text);font-family:Inter,system-ui,Segoe UI,sans-serif}
+    button{font:inherit}.app{width:min(1180px,100%);margin:0 auto;padding:10px 10px 22px}.topbar{position:sticky;top:0;z-index:5;margin:0 -10px 10px;padding:8px 10px;background:#090b12e8;backdrop-filter:blur(16px);border-bottom:1px solid #1d2435}
+    .topline{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;min-width:0}.brand{min-width:0}.brand b{display:block;font-size:14px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{display:block;margin-top:2px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status{justify-self:center;display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #2e3854;border-radius:999px;background:#070910;color:#fff;font-size:12px;font-weight:800}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+    .refresh{min-width:42px;height:38px;border:1px solid #2c3652;border-radius:10px;background:linear-gradient(135deg,var(--green),#6ef3ff);color:#06120e;font-weight:900}.refresh:disabled{opacity:.55}.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:10px;align-items:stretch}.panel{min-width:0;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,#151a2a,#0f1320);box-shadow:0 14px 40px #0007;overflow:hidden}
+    .field{position:relative;min-height:260px;padding:10px}.scoreline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px}.team{min-width:0;border:1px solid #2d3651;border-radius:8px;background:#12192a;padding:9px}.name{font-size:13px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{margin-top:3px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{border-radius:10px;background:#060912;border:1px solid #303b58;padding:8px 12px;font-size:22px;font-weight:950;white-space:nowrap}
+    .pitch{position:relative;height:164px;border:1px solid #41e8c889;border-radius:8px;background:linear-gradient(90deg,#12685d,#1a9d78 50%,#12685d);box-shadow:inset 0 0 36px #59ffd055;overflow:hidden}.pitch:before{content:"";position:absolute;inset:11px;border:1px solid #b8fff055;border-radius:6px}.pitch:after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #d8fff466}.circle{position:absolute;left:50%;top:50%;width:54px;height:54px;border:1px solid #d8fff477;border-radius:50%;transform:translate(-50%,-50%)}.player{position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff}.p1{left:18%;top:28%}.p2{left:27%;top:62%}.p3{left:40%;top:42%}.p4{left:58%;top:34%;background:#ffd75d}.p5{left:70%;top:60%;background:#ffd75d}.p6{left:82%;top:28%;background:#ffd75d}
+    .statsRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.stat{min-width:0;border:1px solid #2a344f;border-radius:8px;background:#11182a;padding:9px}.stat span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat b{display:block;margin-top:5px;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .side{display:grid;gap:10px}.recommend{padding:10px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;color:#dfe5f5;font-size:12px;font-weight:900}.pill{border-radius:999px;border:1px solid #33405f;background:#17213a;padding:5px 8px;color:#cbd5ea;font-size:10px;white-space:nowrap}.pickBig{font-size:22px;font-weight:950;line-height:1.05;overflow-wrap:anywhere}.market{margin-top:4px;color:var(--muted);font-size:12px}.gauge{--p:0;display:grid;place-items:center;width:126px;height:126px;margin:10px auto;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%),#313950 0)}.gaugeInner{display:grid;place-items:center;width:90px;height:90px;border-radius:50%;background:#101522;border:1px solid #303953}.gaugeInner b{font-size:23px}.gaugeInner span{color:var(--muted);font-size:10px}.probGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.prob{min-width:0;border:1px solid #2b3550;border-radius:8px;background:#11182a;padding:7px;text-align:center}.prob b{font-size:15px}.prob span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bars{padding:10px}.bar{display:grid;grid-template-columns:68px minmax(0,1fr) 42px;gap:8px;align-items:center;margin:8px 0;font-size:11px;color:#c9d1e3}.track{height:8px;border-radius:999px;background:#242d43;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.tile{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111522;padding:10px}.tile b{display:block;font-size:18px}.tile span{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.card{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111522;overflow:hidden}.cardHead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border-bottom:1px solid #26304a}.cardTitle{min-width:0;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tag{align-self:start;border-radius:999px;padding:5px 7px;background:#22304c;color:#cdd7ee;font-size:10px;font-weight:800;white-space:nowrap}.tag.good{background:#143b2b;color:#87ffc4}.cardBody{padding:10px}.betLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.betLine b{font-size:18px;overflow-wrap:anywhere}.value{color:var(--green);font-size:20px;font-weight:950}.miniGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{min-width:0;border:1px solid #29334d;border-radius:8px;background:#0f1423;padding:7px}.mini span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini b{display:block;margin-top:3px;font-size:14px}.argument{margin-top:9px;color:#b8c0d4;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.empty{padding:34px 12px;text-align:center;color:var(--muted)}
+    @media(max-width:720px){.app{padding:8px 8px 18px}.topbar{margin:0 -8px 8px;padding:7px 8px}.hero{grid-template-columns:1fr}.field{min-height:auto}.pitch{height:148px}.statsRow,.summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat,.tile{padding:8px}.stat b,.tile b{font-size:16px}.side{grid-template-columns:1fr}.recommend{display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:8px;align-items:center}.recommend .sectionTitle{grid-column:1/-1}.gauge{width:112px;height:112px;margin:0}.gaugeInner{width:80px;height:80px}.probGrid{grid-column:1/-1}.matches{grid-template-columns:1fr}.score{font-size:19px;padding:7px 9px}.pickBig{font-size:20px}.brand b{font-size:13px}}
+    @media(max-width:390px){.team{padding:7px}.name{font-size:12px}.score{font-size:16px}.statsRow{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}.probGrid{grid-template-columns:1fr 1fr 1fr}.bar{grid-template-columns:58px minmax(0,1fr) 36px}.refresh{width:38px;min-width:38px;padding:0}}
   </style>
 </head>
 <body>
   <div class="app">
-    <header><div class="top"><div><h1>eSoccer Picks</h1><div class="sub" id="updated">Sin actualizar</div></div><button id="refresh">Actualizar</button></div></header>
-    <section class="metrics">
-      <div class="metric"><b id="fixtures">0</b><span>Partidos</span></div>
-      <div class="metric"><b id="strong">0</b><span>Picks fuertes</span></div>
-      <div class="metric"><b id="top">0</b><span>Mejor value</span></div>
+    <header class="topbar">
+      <div class="topline">
+        <div class="brand"><b>eSoccer Analytics</b><span id="updated">Sin actualizar</span></div>
+        <div class="status"><i class="dot"></i><span id="liveState">Activo</span></div>
+        <button class="refresh" id="refresh" aria-label="Actualizar">↻</button>
+      </div>
+    </header>
+
+    <section class="hero" id="hero">
+      <div class="panel field">
+        <div class="scoreline">
+          <div class="team"><div class="name" id="homeName">Local</div><div class="meta" id="homeMeta">GF/GA</div></div>
+          <div class="score" id="scoreBox">0 - 0</div>
+          <div class="team"><div class="name" id="awayName">Visita</div><div class="meta" id="awayMeta">GF/GA</div></div>
+        </div>
+        <div class="pitch" aria-hidden="true"><i class="circle"></i><i class="player p1"></i><i class="player p2"></i><i class="player p3"></i><i class="player p4"></i><i class="player p5"></i><i class="player p6"></i></div>
+        <div class="statsRow">
+          <div class="stat"><span>Expected goals</span><b id="expectedGoals">0.0</b></div>
+          <div class="stat"><span>Draw risk</span><b id="drawRisk">0%</b></div>
+          <div class="stat"><span>Goal trend</span><b id="goalTrend">0</b></div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="panel recommend">
+          <div class="sectionTitle">Mejor mercado <span class="pill" id="sourcePill">Tiempo real</span></div>
+          <div>
+            <div class="pickBig" id="topPick">Esperando datos</div>
+            <div class="market" id="topMarket">Pulsa actualizar</div>
+          </div>
+          <div class="gauge" id="gauge"><div class="gaugeInner"><b id="gaugePct">0%</b><span>Value</span></div></div>
+          <div class="probGrid">
+            <div class="prob"><b id="pHome">0%</b><span>Local</span></div>
+            <div class="prob"><b id="pDraw">0%</b><span>Empate</span></div>
+            <div class="prob"><b id="pAway">0%</b><span>Visita</span></div>
+          </div>
+        </div>
+        <div class="panel bars">
+          <div class="sectionTitle">Mercados <span class="pill" id="rulePill">Reglas activas</span></div>
+          <div class="bar"><span>Over 1.5</span><div class="track"><div class="fill" id="barO15"></div></div><b id="txtO15">0%</b></div>
+          <div class="bar"><span>Over 2.5</span><div class="track"><div class="fill" id="barO25"></div></div><b id="txtO25">0%</b></div>
+          <div class="bar"><span>Under 2.5</span><div class="track"><div class="fill" id="barU25"></div></div><b id="txtU25">0%</b></div>
+        </div>
+      </aside>
     </section>
-    <div class="sources" id="sources">Fuentes pendientes.</div>
-    <main class="list" id="list"><div class="empty">Pulsa actualizar.</div></main>
+
+    <section class="summary">
+      <div class="tile"><b id="fixtures">0</b><span>Partidos vivos</span></div>
+      <div class="tile"><b id="strong">0</b><span>Picks fuertes</span></div>
+      <div class="tile"><b id="errors">0</b><span>Errores fuente</span></div>
+    </section>
+
+    <main class="matches" id="list"><div class="empty">Cargando datos reales...</div></main>
   </div>
+
   <script>
     const $ = id => document.getElementById(id);
-    const pct = n => `${Math.round((n || 0) * 100)}%`;
-    $('refresh').onclick = load;
-    window.onload = load;
-    async function load(){
-      $('refresh').disabled=true;$('refresh').textContent='Actualizando...';
+    const REFRESH_MS = 60000;
+    let timer;
+    $('refresh').onclick = () => load(true);
+    window.addEventListener('load', () => load(false));
+
+    async function load(manual){
+      clearTimeout(timer);
+      $('refresh').disabled = true;
+      $('liveState').textContent = 'Actualizando';
       try{
-        const data=await fetch('/api/refresh',{cache:'no-store'}).then(r=>r.json());
-        $('updated').textContent=`Actualizado ${new Date(data.updated_at).toLocaleString()}`;
-        $('fixtures').textContent=data.fixture_count;
-        const strong=data.matches.filter(m=>!String(m.best_pick).startsWith('No Bet'));
-        $('strong').textContent=strong.length;
-        $('top').textContent=data.matches.length?Math.round(data.matches[0].value_score||0):0;
-        $('sources').innerHTML=`<b>Modo:</b> ${esc(data.mode)}<br><b>Regla:</b> H2H GG solo O/U; GT/Battle/Volta solo 1X2`;
-        $('list').innerHTML=data.matches.length?data.matches.map(card).join(''):'<div class="empty">Sin datos suficientes.</div>';
-      }catch(e){$('list').innerHTML=`<div class="empty">Error: ${esc(e)}</div>`}
-      finally{$('refresh').disabled=false;$('refresh').textContent='Actualizar'}
+        const data = await fetch('/api/refresh?t=' + Date.now(), {cache:'no-store'}).then(r => {
+          if(!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+        render(data);
+        $('liveState').textContent = 'Activo';
+      }catch(err){
+        $('liveState').textContent = 'Error';
+        $('list').innerHTML = `<div class="empty">No se pudo actualizar: ${esc(err.message || err)}</div>`;
+      }finally{
+        $('refresh').disabled = false;
+        timer = setTimeout(() => load(false), REFRESH_MS);
+      }
     }
+
+    function render(data){
+      const matches = Array.isArray(data.matches) ? data.matches : [];
+      const strong = matches.filter(m => !String(m.best_pick || '').startsWith('No Bet'));
+      const top = strong[0] || matches[0] || null;
+      $('updated').textContent = data.updated_at ? new Date(data.updated_at).toLocaleString('es-MX') : 'Sin hora';
+      $('fixtures').textContent = data.fixture_count || matches.length || 0;
+      $('strong').textContent = strong.length;
+      $('errors').textContent = (data.errors || []).length;
+      if(top) renderHero(top);
+      $('list').innerHTML = matches.length ? matches.map(card).join('') : '<div class="empty">Sin partidos cruzados con datos suficientes.</div>';
+    }
+
+    function renderHero(m){
+      $('homeName').textContent = m.home_player || 'Local';
+      $('awayName').textContent = m.away_player || 'Visita';
+      $('homeMeta').textContent = statsLine(m.home_stats);
+      $('awayMeta').textContent = statsLine(m.away_stats);
+      $('scoreBox').textContent = `${pct(m.probability_home)} - ${pct(m.probability_away)}`;
+      $('expectedGoals').textContent = num(m.expected_goals, 1);
+      $('drawRisk').textContent = pctScore(m.draw_risk_score);
+      $('goalTrend').textContent = num(m.goal_trend_score, 1);
+      $('topPick').textContent = m.best_pick || 'No Bet';
+      $('topMarket').textContent = `${m.best_market || 'Mercado'} · ${m.league || ''} · ${m.time || ''}`;
+      $('sourcePill').textContent = m.room || 'Datos reales';
+      setGauge(m.value_score || 0);
+      setTextPct('pHome', m.probability_home);
+      setTextPct('pDraw', m.probability_draw);
+      setTextPct('pAway', m.probability_away);
+      setBar('barO15','txtO15', m.probability_over15);
+      setBar('barO25','txtO25', m.probability_over25);
+      setBar('barU25','txtU25', m.probability_under25);
+    }
+
     function card(m){
-      return `<article class="card"><div class="head"><div><div class="match">${esc(m.home_player)} vs ${esc(m.away_player)}</div><div class="meta">${esc(m.league)} - ${m.time}</div></div><div class="badge ${m.confidence==='Baja'?'low':''}">${esc(m.confidence)}</div></div><div class="best"><div><div class="meta">${esc(m.best_market)}</div><div class="pick">${esc(m.best_pick)}</div></div><div class="value">${Math.round(m.value_score||0)}</div></div><div class="grid"><div class="chip"><b>Power local</b><span>${num(m.winner_score_home)}</span></div><div class="chip"><b>Power visita</b><span>${num(m.winner_score_away)}</span></div><div class="chip"><b>Draw risk</b><span>${num(m.draw_risk_score)}</span></div><div class="chip"><b>Goal trend</b><span>${num(m.goal_trend_score)}</span></div></div><div class="notes"><b>Riesgo:</b> ${esc(m.risk)}</div><div class="notes">${esc(m.argument)}</div></article>`
+      const good = !String(m.best_pick || '').startsWith('No Bet');
+      return `<article class="card">
+        <div class="cardHead">
+          <div><div class="cardTitle">${esc(m.home_player)} vs ${esc(m.away_player)}</div><div class="meta">${esc(m.league)} · ${esc(m.time)} · ${esc(m.room || 'fuente directa')}</div></div>
+          <div class="tag ${good ? 'good' : ''}">${esc(m.confidence || 'Baja')}</div>
+        </div>
+        <div class="cardBody">
+          <div class="betLine"><div><div class="market">${esc(m.best_market)}</div><b>${esc(m.best_pick)}</b></div><div class="value">${Math.round(m.value_score || 0)}</div></div>
+          <div class="miniGrid">
+            <div class="mini"><span>Local</span><b>${pct(m.probability_home)}</b></div>
+            <div class="mini"><span>Empate</span><b>${pct(m.probability_draw)}</b></div>
+            <div class="mini"><span>Visita</span><b>${pct(m.probability_away)}</b></div>
+            <div class="mini"><span>O/U 2.5</span><b>${pct(m.probability_over25)} / ${pct(m.probability_under25)}</b></div>
+          </div>
+          <div class="argument">${esc(m.argument || '')}</div>
+        </div>
+      </article>`;
     }
-    function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-    function num(n){return Number(n||0).toFixed(1)}
+
+    function setGauge(v){const n = Math.max(0, Math.min(100, Number(v)||0)); $('gauge').style.setProperty('--p', n); $('gaugePct').textContent = Math.round(n) + '%'}
+    function setBar(id,txt,value){const n = Math.max(0, Math.min(1, Number(value)||0)); $(id).style.width = Math.round(n*100) + '%'; $(txt).textContent = Math.round(n*100) + '%'}
+    function setTextPct(id,value){$(id).textContent = pct(value)}
+    function statsLine(s){return s ? `${num(s.gf,1)} GF · ${num(s.ga,1)} GA · ${s.games || 0} PJ` : 'Sin stats'}
+    function pct(v){return Math.round((Number(v)||0)*100) + '%'}
+    function pctScore(v){return Math.round(Number(v)||0) + '%'}
+    function num(v,d){return (Number(v)||0).toFixed(d)}
+    function esc(s){return String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
   </script>
 </body>
 </html>

@@ -105,23 +105,29 @@ function analyze(f, stats) {
   if (!h || !a) return null;
   const homeExp = Math.max(.05, (h.gf + a.ga) / 2), awayExp = Math.max(.05, (a.gf + h.ga) / 2);
   const total = homeExp + awayExp;
+  const pOver15 = poissonOver(total, 1.5);
   const pOver25 = poissonOver(total, 2.5);
   const goalTrend = clamp(scale(total, 1.8, 3.8) * 30 + h.over25 * 20 + a.over25 * 20 + scale((h.gf+a.gf+h.ga+a.ga)/2,1.4,3.4)*15 + 5, 0, 100);
   const homePower = power(h, a, true), awayPower = power(a, h, false);
   const drawRisk = clamp(50*.25 + Math.max(0,100-Math.abs(homePower-awayPower)*5)*.2 + (1-pOver25)*10, 0, 100);
+  const edge = homePower - awayPower;
+  const probs = winnerProbabilities(edge, drawRisk);
   let best_market = "No Bet", best_pick = "No Bet precision", prob = Math.max(pOver25, 1-pOver25), value = 34, confidence = "Baja";
   if (f.market_mode === "ou_only") {
     if (goalTrend >= 76) [best_market,best_pick,prob,value,confidence] = ["Over/Under 2.5","Over 2.5",pOver25,goalTrend,"Alta"];
     else if (goalTrend <= 28) [best_market,best_pick,prob,value,confidence] = ["Over/Under 2.5","Under 2.5",1-pOver25,100-goalTrend,"Alta"];
   } else {
-    const edge = homePower - awayPower;
-    if (edge >= 18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Local gana",.55,50+edge,"Alta"];
-    if (edge <= -18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Visita gana",.55,50-edge,"Alta"];
+    if (edge >= 18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Local gana",probs.home,50+edge,"Alta"];
+    if (edge <= -18 && drawRisk < 58) [best_market,best_pick,prob,value,confidence] = ["1X2","Visita gana",probs.away,50-edge,"Alta"];
   }
-  return { ...f, best_market, best_pick, best_probability: prob, value_score: Math.round(value*10)/10, confidence, goal_trend_score: Math.round(goalTrend*10)/10, winner_score_home: Math.round(homePower*10)/10, winner_score_away: Math.round(awayPower*10)/10, draw_risk_score: Math.round(drawRisk*10)/10, risk: best_pick.startsWith("No Bet") ? "filtrado precision" : "controlado", argument: `${h.player} ${h.gf}GF/${h.ga}GA vs ${a.player} ${a.gf}GF/${a.ga}GA. Modelo sin cuotas; ranking por edge estadistico.` };
+  return { ...f, best_market, best_pick, best_probability: prob, value_score: Math.round(value*10)/10, confidence, expected_goals: round1(total), probability_home: round3(probs.home), probability_draw: round3(probs.draw), probability_away: round3(probs.away), probability_over15: round3(pOver15), probability_over25: round3(pOver25), probability_under25: round3(1-pOver25), goal_trend_score: round1(goalTrend), winner_score_home: round1(homePower), winner_score_away: round1(awayPower), draw_risk_score: round1(drawRisk), home_stats: publicStats(h), away_stats: publicStats(a), risk: best_pick.startsWith("No Bet") ? "filtrado precision" : "controlado", argument: `${h.player} ${h.gf}GF/${h.ga}GA vs ${a.player} ${a.gf}GF/${a.ga}GA. Modelo sin cuotas; ranking por edge estadistico.` };
 }
 
 function power(t,o,home){return scale(t.gf,.6,4.5)*18 + scale(4.8-t.ga,.4,4.4)*18 + (t.wins/Math.max(t.games,1))*22 + scale(t.gf-o.ga+2,0,5)*24 + (home?6:0) + 12}
+function winnerProbabilities(edge, drawRisk){const draw=clamp(.12+(drawRisk/100)*.22, .1, .38); const remain=1-draw; const homeShare=clamp(.5+edge/120, .12, .88); return {home: remain*homeShare, draw, away: remain*(1-homeShare)}}
+function publicStats(t){return {games:t.games,wins:t.wins,draws:t.draws,gf:round1(t.gf),ga:round1(t.ga),over25:round3(t.over25)}}
+function round1(n){return Math.round((n||0)*10)/10}
+function round3(n){return Math.round((n||0)*1000)/1000}
 function poissonOver(lambda,line){let c=0;for(let k=0;k<=Math.floor(line);k++)c+=Math.exp(-lambda)*Math.pow(lambda,k)/fact(k);return clamp(1-c,0,1)}
 function fact(n){return n<=1?1:n*fact(n-1)}
 function scale(v,l,h){return clamp((v-l)/(h-l),0,1)}

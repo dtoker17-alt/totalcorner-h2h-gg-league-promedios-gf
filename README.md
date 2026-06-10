@@ -52,3 +52,17 @@ El analisis cubre los mercados que BSD entrega para cada evento:
 - Tarjetas rojas
 
 La recomendacion final combina probabilidad BSD, cuotas reales, edge estimado, estado en vivo, estadisticas, alineaciones y factores contextuales disponibles.
+
+## Historial y liquidacion
+
+Cada vez que se abre `Analizar` en un partido, la app guarda el snapshot del pick en Netlify Blobs:
+
+- evento
+- mercado
+- pick
+- probabilidad
+- cuota
+- value
+- analisis
+
+El boton `Liquidar` consulta de nuevo Bzzoiro por evento y marca cada pick como `WON`, `LOST`, `VOID` o `PENDING`. El dashboard muestra win rate, ganadas, perdidas, pendientes y ROI en unidades.

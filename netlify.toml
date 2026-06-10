@@ -9,3 +9,8 @@
   from = "/api/bzzoiro"
   to = "/.netlify/functions/bzzoiro"
   status = 200
+
+[[redirects]]
+  from = "/api/picks"
+  to = "/.netlify/functions/picks"
+  status = 200

@@ -120,8 +120,10 @@ def load_dashboard(settings: Settings) -> dict:
     errors: list[str] = []
     totalcorner_pages = _fetch_totalcorner_pages(errors)
     fixtures = _fetch_h2h_upcoming(settings.timezone, errors)
-    fixtures.extend(_fetch_totalcorner_live_fixtures(totalcorner_pages, settings.timezone, errors))
     totalcorner_stats = _fetch_totalcorner_stats(totalcorner_pages, errors)
+    fixtures.extend(_fetch_esportsbattle_fixtures(totalcorner_stats, settings.timezone, errors))
+    fixtures.extend(_fetch_totalcorner_live_fixtures(totalcorner_pages, settings.timezone, errors))
+    fixtures = _dedupe_fixture_rows(fixtures)
     elo_ratings = _build_elo_ratings(totalcorner_pages)
     for key, rating in elo_ratings.items():
         if key in totalcorner_stats:
@@ -146,7 +148,7 @@ def load_dashboard(settings: Settings) -> dict:
         "leagues": [{"id": item["id"], "name": item["name"], "markets": item["markets"]} for item in LEAGUES],
         "mode": "precision",
         "sources": {
-            "fixtures": "H2H GG API for H2H GG; TotalCorner live rows for GT/Battle/Volta",
+            "fixtures": "H2H GG API; ESportsBattle nearest-matches for Battle/GT/Volta; TotalCorner live fallback",
             "recent_stats": "TotalCorner rolling 48h tables per league",
             "fallback_stats": "H2H GG API participant/fifa/stats when TotalCorner has no recent row",
             "odds": "Manual odds CSV not required yet; missing odds reduce value confidence",
@@ -154,6 +156,18 @@ def load_dashboard(settings: Settings) -> dict:
         "errors": errors[:8],
         "matches": [asdict(p) for p in picks],
     }
+
+
+def _dedupe_fixture_rows(fixtures: list[dict]) -> list[dict]:
+    seen: set[str] = set()
+    unique: list[dict] = []
+    for fixture in sorted(fixtures, key=lambda item: item["start"]):
+        key_value = f"{fixture['league_id']}|{fixture['start']:%Y%m%d%H%M}|{fixture['home_player']}|{fixture['away_player']}"
+        if key_value in seen:
+            continue
+        seen.add(key_value)
+        unique.append(fixture)
+    return unique
 
 
 def _fetch_h2h_upcoming(tz_name: str, errors: list[str]) -> list[dict]:
@@ -253,6 +267,60 @@ def _fetch_totalcorner_live_fixtures(pages: dict[str, str], tz_name: str, errors
         except Exception as exc:  # noqa: BLE001
             errors.append(f"TotalCorner live {league['name']}: {exc}")
     return fixtures
+
+
+def _fetch_esportsbattle_fixtures(stats: dict[str, TeamStat], tz_name: str, errors: list[str]) -> list[dict]:
+    url = "https://football.esportsbattle.com/api/tournaments/nearest-matches"
+    try:
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=20)
+        response.raise_for_status()
+        rows = response.json()
+    except Exception as exc:  # noqa: BLE001
+        errors.append(f"ESportsBattle fixtures: {exc}")
+        return []
+
+    tz = ZoneInfo(tz_name)
+    now = datetime.now(tz)
+    fixtures: list[dict] = []
+    secondary_leagues = [league for league in LEAGUES if league["id"] != "h2hgg"]
+    for row in rows:
+        home_player = _clean(((row.get("participant1") or {}).get("nickname")))
+        away_player = _clean(((row.get("participant2") or {}).get("nickname")))
+        if not home_player or not away_player:
+            continue
+        league = _match_esportsbattle_league(home_player, away_player, stats, secondary_leagues)
+        if not league:
+            continue
+        start = _parse_utc(row.get("date")).astimezone(tz)
+        delta_seconds = (start - now).total_seconds()
+        if delta_seconds < -8 * 60 or delta_seconds > 120 * 60:
+            continue
+        home_team = (((row.get("participant1") or {}).get("team") or {}).get("token_international")) or ""
+        away_team = (((row.get("participant2") or {}).get("team") or {}).get("token_international")) or ""
+        location = ((row.get("location") or {}).get("token_international")) or "ESportsBattle"
+        console = ((row.get("console") or {}).get("token_international")) or ""
+        fixtures.append(
+            {
+                "id": f"esb|{row.get('id')}",
+                "league_id": league["id"],
+                "league": league["name"],
+                "market_mode": league["markets"],
+                "start": start,
+                "room": f"ESportsBattle {location} {console}".strip(),
+                "home_team": home_team,
+                "away_team": away_team,
+                "home_player": home_player,
+                "away_player": away_player,
+            }
+        )
+    return fixtures
+
+
+def _match_esportsbattle_league(home_player: str, away_player: str, stats: dict[str, TeamStat], leagues: list[dict]) -> dict | None:
+    for league in leagues:
+        if _stat_key(league["id"], home_player) in stats and _stat_key(league["id"], away_player) in stats:
+            return league
+    return None
 
 
 def _fetch_h2h_stats(players: list[str], errors: list[str]) -> dict[str, TeamStat]:

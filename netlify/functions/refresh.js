@@ -18,9 +18,11 @@ exports.handler = async () => {
   const stats = {};
   for (const league of LEAGUES) parseStats(league, pages[league.id] || "", stats);
   const fixtures = await h2hFixtures(errors);
+  fixtures.push(...await esportsBattleFixtures(stats, errors));
   for (const league of LEAGUES.filter(l => l.id !== "h2hgg")) fixtures.push(...tcLiveFixtures(league, pages[league.id] || ""));
-  const matches = fixtures.map(f => analyze(f, stats)).filter(Boolean).sort((a,b)=>rank(b)-rank(a));
-  return json({ updated_at: new Date().toISOString(), mode: "precision-netlify", fixture_count: fixtures.length, errors, matches });
+  const unique = dedupe(fixtures);
+  const matches = unique.map(f => analyze(f, stats)).filter(Boolean).sort((a,b)=>rank(b)-rank(a));
+  return json({ updated_at: new Date().toISOString(), mode: "precision-netlify", fixture_count: unique.length, errors, matches });
 };
 
 async function h2hFixtures(errors) {
@@ -35,6 +37,7 @@ async function h2hFixtures(errors) {
 
 function tcLiveFixtures(league, html) {
   const out = [];
+  const now = Date.now();
   const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/g;
   let m;
   while ((m = rowRe.exec(html))) {
@@ -42,9 +45,44 @@ function tcLiveFixtures(league, html) {
     if (cols.length < 5 || /^Full$/i.test(cols[1])) continue;
     const hp = splitPlayer(cols[2]), ap = splitPlayer(cols[4]);
     if (!hp.player || !ap.player) continue;
-    out.push({ id: `${league.id}|${cols[0]}|${hp.player}|${ap.player}`, league_id: league.id, league: league.name, market_mode: league.mode, time: utcToMx(cols[0]), home_player: hp.player, away_player: ap.player, home_team: hp.team, away_team: ap.team });
+    const start = totalCornerDate(cols[0]);
+    const delta = start.getTime() - now;
+    if (!Number.isFinite(delta) || delta < -8 * 60 * 1000 || delta > 75 * 60 * 1000) continue;
+    out.push({ id: `${league.id}|${cols[0]}|${hp.player}|${ap.player}`, league_id: league.id, league: league.name, market_mode: league.mode, time: mxTime(start), room: "TotalCorner live", home_player: hp.player, away_player: ap.player, home_team: hp.team, away_team: ap.team });
   }
   return out.slice(0, 8);
+}
+
+async function esportsBattleFixtures(stats, errors) {
+  try {
+    const rows = await fetch("https://football.esportsbattle.com/api/tournaments/nearest-matches", { headers: { "user-agent": "Mozilla/5.0", accept: "application/json" } }).then(r => r.json());
+    const leagues = LEAGUES.filter(l => l.id !== "h2hgg");
+    const now = Date.now();
+    return rows.map(row => {
+      const hp = clean(row.participant1?.nickname), ap = clean(row.participant2?.nickname);
+      const league = leagues.find(l => stats[key(l.id, hp)] && stats[key(l.id, ap)]);
+      if (!league) return null;
+      const start = new Date(row.date);
+      const delta = start.getTime() - now;
+      if (!Number.isFinite(delta) || delta < -8 * 60 * 1000 || delta > 120 * 60 * 1000) return null;
+      const location = row.location?.token_international || "ESportsBattle";
+      const consoleName = row.console?.token_international || "";
+      return { id: `esb|${row.id}`, league_id: league.id, league: league.name, market_mode: league.mode, time: mxTime(row.date), room: `ESportsBattle ${location} ${consoleName}`.trim(), home_player: hp, away_player: ap, home_team: row.participant1?.team?.token_international || "", away_team: row.participant2?.team?.token_international || "" };
+    }).filter(Boolean);
+  } catch (err) {
+    errors.push(`esportsbattle: ${err.message}`);
+    return [];
+  }
+}
+
+function dedupe(fixtures) {
+  const seen = new Set();
+  return fixtures.filter(f => {
+    const k = `${f.league_id}|${f.time}|${f.home_player}|${f.away_player}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
 }
 
 function parseStats(league, html, stats) {
@@ -96,6 +134,6 @@ function clean(s){return String(s||"").trim().toUpperCase().replace(/\s+/g," ")}
 function key(l,p){return `${l}|${clean(p)}`}
 function pct(s){return (+String(s).replace("%","")||0)/100}
 function mxTime(iso){return new Date(iso).toLocaleTimeString("es-MX",{timeZone:"America/Mexico_City",hour:"2-digit",minute:"2-digit",hour12:false})}
-function utcToMx(s){const m=s.match(/(\d\d)\/(\d\d)\s+(\d\d):(\d\d)/);if(!m)return s;const d=new Date(Date.UTC(new Date().getUTCFullYear(),+m[1]-1,+m[2],+m[3],+m[4]));return d.toLocaleTimeString("es-MX",{timeZone:"America/Mexico_City",hour:"2-digit",minute:"2-digit",hour12:false})}
+function totalCornerDate(s){const m=String(s||"").match(/(\d\d)\/(\d\d)\s+(\d\d):(\d\d)/);if(!m)return new Date(NaN);return new Date(Date.UTC(new Date().getUTCFullYear(),+m[1]-1,+m[2],+m[3],+m[4]))}
 function rank(m){return (m.best_pick.startsWith("No Bet")?0:1000)+m.value_score}
 function json(body){return { statusCode: 200, headers: { "content-type": "application/json", "cache-control": "no-store" }, body: JSON.stringify(body) }}

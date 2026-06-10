@@ -121,17 +121,17 @@ function analyzeEvent(event) {
     prediction_confidence: event.prediction?.model?.confidence ?? null,
     model_version: event.prediction?.model?.version || null,
     probabilities: {
-      home: pctToUnit(match.prob_home),
-      draw: pctToUnit(match.prob_draw),
-      away: pctToUnit(match.prob_away),
-      over15: pctToUnit(ou.prob_over_15),
-      over25: pctToUnit(ou.prob_over_25),
-      over35: pctToUnit(ou.prob_over_35),
-      under15: 1 - pctToUnit(ou.prob_over_15),
-      under25: 1 - pctToUnit(ou.prob_over_25),
-      under35: 1 - pctToUnit(ou.prob_over_35),
-      btts_yes: pctToUnit(btts.prob_yes),
-      btts_no: 1 - pctToUnit(btts.prob_yes),
+      home: probToUnit(match.prob_home),
+      draw: probToUnit(match.prob_draw),
+      away: probToUnit(match.prob_away),
+      over15: probToUnit(ou.prob_over_15),
+      over25: probToUnit(ou.prob_over_25),
+      over35: probToUnit(ou.prob_over_35),
+      under15: inverseProb(ou.prob_over_15),
+      under25: inverseProb(ou.prob_over_25),
+      under35: inverseProb(ou.prob_over_35),
+      btts_yes: probToUnit(btts.prob_yes),
+      btts_no: inverseProb(btts.prob_yes),
     },
     expected_goals: {
       home: toNum(goals.home),
@@ -158,36 +158,62 @@ function analyzeEvent(event) {
 
 function chooseBestMarket({ match, ou, btts, oddsMarkets }) {
   const candidates = [];
-  addCandidate(candidates, "1X2", "Local gana", pctToUnit(match.prob_home), bestOdd(oddsMarkets, "1x2", "HOME"));
-  addCandidate(candidates, "1X2", "Empate", pctToUnit(match.prob_draw), bestOdd(oddsMarkets, "1x2", "DRAW"));
-  addCandidate(candidates, "1X2", "Visita gana", pctToUnit(match.prob_away), bestOdd(oddsMarkets, "1x2", "AWAY"));
-  addCandidate(candidates, "Over/Under 1.5", "Over 1.5", pctToUnit(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "over"));
-  addCandidate(candidates, "Over/Under 1.5", "Under 1.5", 1 - pctToUnit(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "under"));
-  addCandidate(candidates, "Over/Under 2.5", "Over 2.5", pctToUnit(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "over"));
-  addCandidate(candidates, "Over/Under 2.5", "Under 2.5", 1 - pctToUnit(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "under"));
-  addCandidate(candidates, "Over/Under 3.5", "Over 3.5", pctToUnit(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "over"));
-  addCandidate(candidates, "Over/Under 3.5", "Under 3.5", 1 - pctToUnit(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "under"));
-  addCandidate(candidates, "BTTS", "Ambos anotan Si", pctToUnit(btts.prob_yes), bestOdd(oddsMarkets, "btts", "yes"));
-  addCandidate(candidates, "BTTS", "Ambos anotan No", 1 - pctToUnit(btts.prob_yes), bestOdd(oddsMarkets, "btts", "no"));
+  addCandidate(candidates, "1X2", "Local gana", probToUnit(match.prob_home), bestOdd(oddsMarkets, "1x2", "HOME"));
+  addCandidate(candidates, "1X2", "Empate", probToUnit(match.prob_draw), bestOdd(oddsMarkets, "1x2", "DRAW"));
+  addCandidate(candidates, "1X2", "Visita gana", probToUnit(match.prob_away), bestOdd(oddsMarkets, "1x2", "AWAY"));
+  addCandidate(candidates, "Over/Under 1.5", "Over 1.5", probToUnit(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "over"));
+  addCandidate(candidates, "Over/Under 1.5", "Under 1.5", inverseProb(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "under"));
+  addCandidate(candidates, "Over/Under 2.5", "Over 2.5", probToUnit(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "over"));
+  addCandidate(candidates, "Over/Under 2.5", "Under 2.5", inverseProb(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "under"));
+  addCandidate(candidates, "Over/Under 3.5", "Over 3.5", probToUnit(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "over"));
+  addCandidate(candidates, "Over/Under 3.5", "Under 3.5", inverseProb(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "under"));
+  addCandidate(candidates, "BTTS", "Ambos anotan Si", probToUnit(btts.prob_yes), bestOdd(oddsMarkets, "btts", "yes"));
+  addCandidate(candidates, "BTTS", "Ambos anotan No", inverseProb(btts.prob_yes), bestOdd(oddsMarkets, "btts", "no"));
   const valid = candidates.filter((item) => item.probability > 0);
   return valid.sort((a, b) => b.value_score - a.value_score)[0] || { market: "No Bet", pick: "No Bet", probability: 0, odds: null, edge: 0, value_score: 0, confidence: "Baja" };
 }
 
 function addCandidate(out, market, pick, probability, odds) {
   if (!Number.isFinite(probability) || probability <= 0) return;
-  const implied = odds ? 1 / odds.decimal_odds : null;
-  const edge = implied ? probability - implied : probability - 0.5;
-  const value_score = Math.max(0, Math.min(100, probability * 72 + Math.max(0, edge) * 140 + (odds ? 8 : 0)));
+  const implied = odds?.decimal_odds ? 1 / odds.decimal_odds : null;
+  const edge = implied == null ? 0 : probability - implied;
+  const value_score = implied == null
+    ? Math.max(0, Math.min(58, probability * 70))
+    : Math.max(0, Math.min(100, probability * 60 + Math.max(0, edge) * 160 + 10));
   out.push({ market, pick, probability: round3(probability), odds, edge: round3(edge), value_score: round1(value_score), confidence: value_score >= 74 ? "Alta" : value_score >= 62 ? "Media" : "Baja" });
 }
 
 function flattenMarkets(markets) {
   return Object.entries(markets || {}).map(([key, value]) => {
     const outcomes = [];
-    for (const [bookmaker, data] of Object.entries(value || {})) {
-      for (const [outcome, row] of Object.entries(data || {})) {
-        if (row && typeof row === "object" && row.decimal_odds) {
-          outcomes.push({ market: key, bookmaker, outcome, outcome_name: row.outcome_name || outcome, line: row.line ?? null, decimal_odds: Number(row.decimal_odds), movement: row.movement || "", is_max_quote: Boolean(row.is_max_quote), updated_at: row.updated_at || "" });
+    for (const [outcome, row] of Object.entries(value || {})) {
+      if (!row || typeof row !== "object") continue;
+      if (row.best_odds) {
+        outcomes.push({
+          market: key,
+          bookmaker: row.best_bookmaker_name || row.best_bookmaker_slug || "best",
+          outcome,
+          outcome_name: row.outcome_name || outcome,
+          line: row.line ?? null,
+          decimal_odds: Number(row.best_odds),
+          movement: "",
+          is_max_quote: true,
+          updated_at: latestUpdated(row.bookmakers || {}),
+        });
+      }
+      for (const [bookmaker, quote] of Object.entries(row.bookmakers || {})) {
+        if (quote && typeof quote === "object" && quote.decimal_odds) {
+          outcomes.push({
+            market: key,
+            bookmaker,
+            outcome,
+            outcome_name: row.outcome_name || outcome,
+            line: row.line ?? null,
+            decimal_odds: Number(quote.decimal_odds),
+            movement: quote.movement || "",
+            is_max_quote: false,
+            updated_at: quote.updated_at || "",
+          });
         }
       }
     }
@@ -200,9 +226,17 @@ function bestOdd(markets, market, outcome) {
   return rows.sort((a, b) => b.decimal_odds - a.decimal_odds)[0] || null;
 }
 
+function latestUpdated(bookmakers) {
+  return Object.values(bookmakers)
+    .map((item) => item?.updated_at || "")
+    .filter(Boolean)
+    .sort()
+    .at(-1) || "";
+}
+
 async function fetchJson(path, token, errors) {
   try {
-    const res = await fetch(`${BASE}${path}`, { headers: { authorization: `Token ${token}`, accept: "application/json", "user-agent": "eSoccer-analytics/1.0" } });
+    const res = await fetch(`${BASE}${path}`, { headers: { authorization: `Token ${token}`, accept: "application/json", "user-agent": "football-real-analytics/1.0" } });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error(`${res.status} ${path}`);
     return await res.json();
@@ -245,10 +279,14 @@ function dedupe(items) {
   });
 }
 
-function pctToUnit(value) {
+function probToUnit(value) {
   const n = Number(value);
-  if (!Number.isFinite(n)) return 0;
+  if (!Number.isFinite(n)) return null;
   return n > 1 ? n / 100 : n;
+}
+function inverseProb(value) {
+  const n = probToUnit(value);
+  return n == null ? null : 1 - n;
 }
 function toNum(value) { const n = Number(value); return Number.isFinite(n) ? n : 0; }
 function round1(n) { return Math.round((Number(n) || 0) * 10) / 10; }

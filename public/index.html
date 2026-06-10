@@ -3,61 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>eSoccer Analytics</title>
+  <title>Football Real Analytics</title>
   <style>
-    :root{color-scheme:dark;--bg:#090b12;--panel:#111522;--panel2:#171c2d;--line:#283044;--soft:#202842;--text:#f7f8fb;--muted:#929bb1;--green:#28e59a;--yellow:#ffd75d;--red:#ff6177;--blue:#69b7ff;--purple:#a783ff;--cyan:#40e0d0}
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden;background:radial-gradient(circle at 25% 0,#16253b 0,#090b12 34rem);color:var(--text);font-family:Inter,system-ui,Segoe UI,sans-serif}
-    button{font:inherit}.app{width:min(1180px,100%);margin:0 auto;padding:10px 10px 22px}.topbar{position:sticky;top:0;z-index:5;margin:0 -10px 10px;padding:8px 10px;background:#090b12e8;backdrop-filter:blur(16px);border-bottom:1px solid #1d2435}
-    .topline{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;min-width:0}.brand{min-width:0}.brand b{display:block;font-size:14px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{display:block;margin-top:2px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status{justify-self:center;display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid #2e3854;border-radius:999px;background:#070910;color:#fff;font-size:12px;font-weight:800}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-    .refresh{min-width:42px;height:38px;border:1px solid #2c3652;border-radius:10px;background:linear-gradient(135deg,var(--green),#6ef3ff);color:#06120e;font-weight:900}.refresh:disabled{opacity:.55}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}.tab{height:38px;border:1px solid #2b3653;border-radius:8px;background:#101725;color:#c7d1e7;font-weight:900}.tab.active{background:#173c32;border-color:#2ddf9a;color:#eafff6}.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:10px;align-items:stretch}.panel{min-width:0;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,#151a2a,#0f1320);box-shadow:0 14px 40px #0007;overflow:hidden}
-    .field{position:relative;min-height:260px;padding:10px}.scoreline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px}.team{min-width:0;border:1px solid #2d3651;border-radius:8px;background:#12192a;padding:9px}.name{font-size:13px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{margin-top:3px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{border-radius:10px;background:#060912;border:1px solid #303b58;padding:8px 12px;font-size:22px;font-weight:950;white-space:nowrap}
+    :root{color-scheme:dark;--bg:#080b10;--panel:#111722;--panel2:#151d2b;--line:#273247;--text:#f6f8fc;--muted:#96a1b6;--green:#2be39b;--yellow:#ffd464;--red:#ff657a;--cyan:#51dce0;--purple:#a889ff}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden;background:radial-gradient(circle at 20% 0,#152a3b 0,#080b10 34rem);color:var(--text);font-family:Inter,system-ui,Segoe UI,sans-serif}
+    button{font:inherit}.app{width:min(1180px,100%);margin:0 auto;padding:10px 10px 22px}.topbar{position:sticky;top:0;z-index:5;margin:0 -10px 10px;padding:8px 10px;background:#080b10e8;backdrop-filter:blur(16px);border-bottom:1px solid #1d2534}
+    .topline{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:8px}.brand{min-width:0}.brand b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand span{display:block;margin-top:2px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #303b54;border-radius:999px;background:#070910;font-size:12px;font-weight:900}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}.refresh{min-width:42px;height:38px;border:1px solid #2f3d58;border-radius:10px;background:linear-gradient(135deg,var(--green),#6ef3ff);color:#06120e;font-weight:950}.refresh:disabled{opacity:.55}
+    .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:10px}.panel{min-width:0;border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,#151c2a,#0f141f);box-shadow:0 14px 40px #0007;overflow:hidden}.field{padding:10px}.scoreline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin-bottom:8px}.team{min-width:0;border:1px solid #2d3850;border-radius:8px;background:#121a29;padding:9px}.name{font-size:13px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{margin-top:3px;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{border-radius:10px;background:#060912;border:1px solid #303b58;padding:8px 12px;font-size:22px;font-weight:950;white-space:nowrap}
     .pitch{position:relative;height:164px;border:1px solid #41e8c889;border-radius:8px;background:linear-gradient(90deg,#12685d,#1a9d78 50%,#12685d);box-shadow:inset 0 0 36px #59ffd055;overflow:hidden}.pitch:before{content:"";position:absolute;inset:11px;border:1px solid #b8fff055;border-radius:6px}.pitch:after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #d8fff466}.circle{position:absolute;left:50%;top:50%;width:54px;height:54px;border:1px solid #d8fff477;border-radius:50%;transform:translate(-50%,-50%)}.player{position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff}.p1{left:18%;top:28%}.p2{left:27%;top:62%}.p3{left:40%;top:42%}.p4{left:58%;top:34%;background:#ffd75d}.p5{left:70%;top:60%;background:#ffd75d}.p6{left:82%;top:28%;background:#ffd75d}
-    .statsRow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.stat{min-width:0;border:1px solid #2a344f;border-radius:8px;background:#11182a;padding:9px}.stat span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat b{display:block;margin-top:5px;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .side{display:grid;gap:10px}.recommend{padding:10px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;color:#dfe5f5;font-size:12px;font-weight:900}.pill{border-radius:999px;border:1px solid #33405f;background:#17213a;padding:5px 8px;color:#cbd5ea;font-size:10px;white-space:nowrap}.pickBig{font-size:22px;font-weight:950;line-height:1.05;overflow-wrap:anywhere}.market{margin-top:4px;color:var(--muted);font-size:12px}.gauge{--p:0;display:grid;place-items:center;width:126px;height:126px;margin:10px auto;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%),#313950 0)}.gaugeInner{display:grid;place-items:center;width:90px;height:90px;border-radius:50%;background:#101522;border:1px solid #303953}.gaugeInner b{font-size:23px}.gaugeInner span{color:var(--muted);font-size:10px}.probGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.prob{min-width:0;border:1px solid #2b3550;border-radius:8px;background:#11182a;padding:7px;text-align:center}.prob b{font-size:15px}.prob span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .bars{padding:10px}.bar{display:grid;grid-template-columns:68px minmax(0,1fr) 42px;gap:8px;align-items:center;margin:8px 0;font-size:11px;color:#c9d1e3}.track{height:8px;border-radius:999px;background:#242d43;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
-    .summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}.tile{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111522;padding:10px}.tile b{display:block;font-size:18px}.tile span{display:block;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.card{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111522;overflow:hidden}.cardHead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border-bottom:1px solid #26304a}.cardTitle{min-width:0;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tag{align-self:start;border-radius:999px;padding:5px 7px;background:#22304c;color:#cdd7ee;font-size:10px;font-weight:800;white-space:nowrap}.tag.good{background:#143b2b;color:#87ffc4}.cardBody{padding:10px}.betLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.betLine b{font-size:18px;overflow-wrap:anywhere}.value{color:var(--green);font-size:20px;font-weight:950}.miniGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{min-width:0;border:1px solid #29334d;border-radius:8px;background:#0f1423;padding:7px}.mini span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini b{display:block;margin-top:3px;font-size:14px}.argument{margin-top:9px;color:#b8c0d4;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.analyzeBtn{width:100%;height:36px;margin-top:10px;border:1px solid #345070;border-radius:8px;background:#182946;color:#e8f1ff;font-weight:900}.empty{padding:34px 12px;text-align:center;color:var(--muted)}
-    .modal{position:fixed;inset:0;z-index:20;display:none;background:#02040acc;padding:10px;overflow:auto}.modal.open{display:block}.sheet{width:min(860px,100%);margin:0 auto;border:1px solid #34405c;border-radius:8px;background:#0d1220;box-shadow:0 20px 70px #000;overflow:hidden}.sheetTop{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:12px;background:#10182a;border-bottom:1px solid #28334f}.sheetTitle{min-width:0;font-size:16px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.closeBtn{width:38px;height:38px;border:1px solid #35425f;border-radius:8px;background:#171f32;color:#fff;font-size:20px}.sheetBody{padding:10px;display:grid;gap:10px}.analysisGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analysisPanel{min-width:0;border:1px solid #293650;border-radius:8px;background:#111827;padding:10px}.analysisPanel h3{margin:0 0 8px;font-size:13px}.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-bottom:1px solid #202a40;font-size:12px}.kv:last-child{border-bottom:0}.kv span{min-width:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kv b{text-align:right;white-space:nowrap}.wide{grid-column:1/-1}.analysisText{color:#c4ccdf;font-size:12px;line-height:1.5;overflow-wrap:anywhere}.marketList{display:grid;gap:7px}.marketRow{border:1px solid #293650;border-radius:8px;background:#0f1423;padding:8px;font-size:11px}.marketRow b{display:block;margin-bottom:4px}.marketRow span{color:#b9c3d8}.warn{color:var(--yellow)}.ok{color:var(--green)}.bad{color:var(--red)}
-    @media(max-width:720px){.app{padding:8px 8px 18px}.topbar{margin:0 -8px 8px;padding:7px 8px}.hero{grid-template-columns:1fr}.field{min-height:auto}.pitch{height:148px}.statsRow,.summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat,.tile{padding:8px}.stat b,.tile b{font-size:16px}.side{grid-template-columns:1fr}.recommend{display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:8px;align-items:center}.recommend .sectionTitle{grid-column:1/-1}.gauge{width:112px;height:112px;margin:0}.gaugeInner{width:80px;height:80px}.probGrid{grid-column:1/-1}.matches{grid-template-columns:1fr}.score{font-size:19px;padding:7px 9px}.pickBig{font-size:20px}.brand b{font-size:13px}.analysisGrid{grid-template-columns:1fr}.modal{padding:6px}.sheetBody{padding:8px}}
-    @media(max-width:390px){.team{padding:7px}.name{font-size:12px}.score{font-size:16px}.statsRow{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}.probGrid{grid-template-columns:1fr 1fr 1fr}.bar{grid-template-columns:58px minmax(0,1fr) 36px}.refresh{width:38px;min-width:38px;padding:0}}
+    .statsRow,.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.stat,.tile{min-width:0;border:1px solid #2a344f;border-radius:8px;background:#111827;padding:9px}.stat span,.tile span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.stat b,.tile b{display:block;margin-top:5px;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .side{display:grid;gap:10px}.recommend,.bars{padding:10px}.sectionTitle{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;font-size:12px;font-weight:950}.pill{border-radius:999px;border:1px solid #33405f;background:#17213a;padding:5px 8px;color:#cbd5ea;font-size:10px;white-space:nowrap}.pickBig{font-size:22px;font-weight:950;line-height:1.05;overflow-wrap:anywhere}.market{margin-top:4px;color:var(--muted);font-size:12px}.gauge{--p:0;display:grid;place-items:center;width:126px;height:126px;margin:10px auto;border-radius:50%;background:conic-gradient(var(--green) calc(var(--p)*1%),#313950 0)}.gaugeInner{display:grid;place-items:center;width:90px;height:90px;border-radius:50%;background:#101522;border:1px solid #303953}.gaugeInner b{font-size:23px}.gaugeInner span{color:var(--muted);font-size:10px}.probGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.prob{min-width:0;border:1px solid #2b3550;border-radius:8px;background:#111827;padding:7px;text-align:center}.prob b{font-size:15px}.prob span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar{display:grid;grid-template-columns:68px minmax(0,1fr) 42px;gap:8px;align-items:center;margin:8px 0;font-size:11px;color:#c9d1e3}.track{height:8px;border-radius:999px;background:#242d43;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+    .summary{margin:10px 0}.matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.card{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111722;overflow:hidden}.cardHead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border-bottom:1px solid #26304a}.cardTitle{min-width:0;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tag{align-self:start;border-radius:999px;padding:5px 7px;background:#22304c;color:#cdd7ee;font-size:10px;font-weight:900;white-space:nowrap}.tag.good{background:#143b2b;color:#87ffc4}.cardBody{padding:10px}.betLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.betLine b{font-size:18px;overflow-wrap:anywhere}.value{color:var(--green);font-size:20px;font-weight:950}.miniGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{min-width:0;border:1px solid #29334d;border-radius:8px;background:#0f1423;padding:7px}.mini span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini b{display:block;margin-top:3px;font-size:14px}.argument{margin-top:9px;color:#b8c0d4;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.analyzeBtn{width:100%;height:36px;margin-top:10px;border:1px solid #345070;border-radius:8px;background:#182946;color:#e8f1ff;font-weight:900}.empty{padding:34px 12px;text-align:center;color:var(--muted)}
+    .modal{position:fixed;inset:0;z-index:20;display:none;background:#02040acc;padding:10px;overflow:auto}.modal.open{display:block}.sheet{width:min(900px,100%);margin:0 auto;border:1px solid #34405c;border-radius:8px;background:#0d1220;box-shadow:0 20px 70px #000;overflow:hidden}.sheetTop{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:12px;background:#10182a;border-bottom:1px solid #28334f}.sheetTitle{min-width:0;font-size:16px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.closeBtn{width:38px;height:38px;border:1px solid #35425f;border-radius:8px;background:#171f32;color:#fff;font-size:20px}.sheetBody{padding:10px}.analysisGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analysisPanel{min-width:0;border:1px solid #293650;border-radius:8px;background:#111827;padding:10px}.analysisPanel h3{margin:0 0 8px;font-size:13px}.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-bottom:1px solid #202a40;font-size:12px}.kv:last-child{border-bottom:0}.kv span{min-width:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kv b{text-align:right;white-space:nowrap}.wide{grid-column:1/-1}.analysisText{color:#c4ccdf;font-size:12px;line-height:1.5;overflow-wrap:anywhere}.marketList{display:grid;gap:7px}.marketRow{border:1px solid #293650;border-radius:8px;background:#0f1423;padding:8px;font-size:11px}.marketRow b{display:block;margin-bottom:4px}.marketRow span{color:#b9c3d8;overflow-wrap:anywhere}
+    @media(max-width:720px){.app{padding:8px 8px 18px}.topbar{margin:0 -8px 8px;padding:7px 8px}.hero{grid-template-columns:1fr}.pitch{height:148px}.statsRow,.summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat,.tile{padding:8px}.stat b,.tile b{font-size:16px}.side{grid-template-columns:1fr}.recommend{display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:8px;align-items:center}.recommend .sectionTitle{grid-column:1/-1}.gauge{width:112px;height:112px;margin:0}.gaugeInner{width:80px;height:80px}.probGrid{grid-column:1/-1}.matches{grid-template-columns:1fr}.score{font-size:19px;padding:7px 9px}.pickBig{font-size:20px}.brand b{font-size:13px}.analysisGrid{grid-template-columns:1fr}.modal{padding:6px}.sheetBody{padding:8px}}
+    @media(max-width:390px){.team{padding:7px}.name{font-size:12px}.score{font-size:16px}.statsRow,.summary{grid-template-columns:1fr 1fr}.probGrid{grid-template-columns:1fr 1fr 1fr}.bar{grid-template-columns:58px minmax(0,1fr) 36px}.refresh{width:38px;min-width:38px;padding:0}.status{padding:7px 9px}}
   </style>
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div class="topline">
-        <div class="brand"><b>eSoccer Analytics</b><span id="updated">Sin actualizar</span></div>
+        <div class="brand"><b>Football Real Analytics</b><span id="updated">Datos Bzzoiro en tiempo real</span></div>
         <div class="status"><i class="dot"></i><span id="liveState">Activo</span></div>
         <button class="refresh" id="refresh" aria-label="Actualizar">R</button>
       </div>
     </header>
-    <nav class="tabs" aria-label="Menu de datos">
-      <button class="tab active" id="tabEsoccer" type="button">eSoccer</button>
-      <button class="tab" id="tabBzzoiro" type="button">API Bzzoiro</button>
-    </nav>
-
-    <section class="hero" id="hero">
+    <section class="hero">
       <div class="panel field">
         <div class="scoreline">
-          <div class="team"><div class="name" id="homeName">Local</div><div class="meta" id="homeMeta">GF/GA</div></div>
+          <div class="team"><div class="name" id="homeName">Local</div><div class="meta" id="homeMeta">Liga</div></div>
           <div class="score" id="scoreBox">0 - 0</div>
-          <div class="team"><div class="name" id="awayName">Visita</div><div class="meta" id="awayMeta">GF/GA</div></div>
+          <div class="team"><div class="name" id="awayName">Visita</div><div class="meta" id="awayMeta">Modelo</div></div>
         </div>
         <div class="pitch" aria-hidden="true"><i class="circle"></i><i class="player p1"></i><i class="player p2"></i><i class="player p3"></i><i class="player p4"></i><i class="player p5"></i><i class="player p6"></i></div>
         <div class="statsRow">
           <div class="stat"><span>Expected goals</span><b id="expectedGoals">0.0</b></div>
-          <div class="stat"><span>Draw risk</span><b id="drawRisk">0%</b></div>
-          <div class="stat"><span>Goal trend</span><b id="goalTrend">0</b></div>
+          <div class="stat"><span>Empate</span><b id="drawRisk">0%</b></div>
+          <div class="stat"><span>Value</span><b id="goalTrend">0</b></div>
         </div>
       </div>
-
       <aside class="side">
         <div class="panel recommend">
-          <div class="sectionTitle">Mejor mercado <span class="pill" id="sourcePill">Tiempo real</span></div>
-          <div>
-            <div class="pickBig" id="topPick">Esperando datos</div>
-            <div class="market" id="topMarket">Pulsa actualizar</div>
-          </div>
+          <div class="sectionTitle">Mejor mercado <span class="pill" id="sourcePill">BSD API</span></div>
+          <div><div class="pickBig" id="topPick">Esperando datos</div><div class="market" id="topMarket">Actualizando</div></div>
           <div class="gauge" id="gauge"><div class="gaugeInner"><b id="gaugePct">0%</b><span>Value</span></div></div>
           <div class="probGrid">
             <div class="prob"><b id="pHome">0%</b><span>Local</span></div>
@@ -66,93 +55,58 @@
           </div>
         </div>
         <div class="panel bars">
-          <div class="sectionTitle">Mercados <span class="pill" id="rulePill">Reglas activas</span></div>
+          <div class="sectionTitle">Goles <span class="pill">CatBoost + odds</span></div>
           <div class="bar"><span>Over 1.5</span><div class="track"><div class="fill" id="barO15"></div></div><b id="txtO15">0%</b></div>
           <div class="bar"><span>Over 2.5</span><div class="track"><div class="fill" id="barO25"></div></div><b id="txtO25">0%</b></div>
           <div class="bar"><span>Under 2.5</span><div class="track"><div class="fill" id="barU25"></div></div><b id="txtU25">0%</b></div>
         </div>
       </aside>
     </section>
-
     <section class="summary">
-      <div class="tile"><b id="fixtures">0</b><span>Partidos vivos</span></div>
-      <div class="tile"><b id="strong">0</b><span>Picks fuertes</span></div>
+      <div class="tile"><b id="fixtures">0</b><span>Partidos</span></div>
+      <div class="tile"><b id="strong">0</b><span>Value picks</span></div>
       <div class="tile"><b id="errors">0</b><span>Errores fuente</span></div>
     </section>
-
-    <main class="matches" id="list"><div class="empty">Cargando datos reales...</div></main>
+    <main class="matches" id="list"><div class="empty">Cargando fútbol real...</div></main>
   </div>
-
   <div class="modal" id="analysisModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="sheet">
-      <div class="sheetTop">
-        <div class="sheetTitle" id="modalTitle">Analisis del partido</div>
-        <button class="closeBtn" id="closeModal" aria-label="Cerrar">x</button>
-      </div>
+      <div class="sheetTop"><div class="sheetTitle" id="modalTitle">Analisis del partido</div><button class="closeBtn" id="closeModal" aria-label="Cerrar">x</button></div>
       <div class="sheetBody" id="modalBody"></div>
     </div>
   </div>
-
   <script>
     const $ = id => document.getElementById(id);
     const REFRESH_MS = 60000;
     let timer;
     let currentMatches = [];
-    let activeMode = 'esoccer';
-    $('refresh').onclick = () => load(true);
-    $('tabEsoccer').onclick = () => switchMode('esoccer');
-    $('tabBzzoiro').onclick = () => switchMode('bzzoiro');
+    $('refresh').onclick = () => load();
     $('closeModal').onclick = closeAnalysis;
     $('analysisModal').addEventListener('click', event => { if(event.target.id === 'analysisModal') closeAnalysis(); });
     document.addEventListener('keydown', event => { if(event.key === 'Escape') closeAnalysis(); });
-    window.addEventListener('load', () => load(false));
+    window.addEventListener('load', load);
 
-    function switchMode(mode){
-      activeMode = mode;
-      $('tabEsoccer').classList.toggle('active', mode === 'esoccer');
-      $('tabBzzoiro').classList.toggle('active', mode === 'bzzoiro');
-      $('list').innerHTML = '<div class="empty">Cargando datos reales...</div>';
-      load(true);
-    }
-
-    async function load(manual){
+    async function load(){
       clearTimeout(timer);
       $('refresh').disabled = true;
       $('liveState').textContent = 'Actualizando';
       try{
-        const endpoint = activeMode === 'bzzoiro' ? '/api/bzzoiro?limit=24&t=' : '/api/refresh?t=';
-        const res = await fetch(endpoint + Date.now(), {cache:'no-store'});
+        const res = await fetch('/api/bzzoiro?limit=32&t=' + Date.now(), {cache:'no-store'});
         const data = await res.json().catch(() => null);
-        if(!res.ok && !(activeMode === 'bzzoiro' && data)) throw new Error('HTTP ' + res.status);
         if(!data) throw new Error('Respuesta vacia');
-        activeMode === 'bzzoiro' ? renderBzzoiro(data) : render(data);
-        $('liveState').textContent = 'Activo';
+        render(data);
+        $('liveState').textContent = data.configured === false ? 'Sin token' : 'Activo';
       }catch(err){
         $('liveState').textContent = 'Error';
         $('list').innerHTML = `<div class="empty">No se pudo actualizar: ${esc(err.message || err)}</div>`;
       }finally{
         $('refresh').disabled = false;
-        timer = setTimeout(() => load(false), REFRESH_MS);
+        timer = setTimeout(load, REFRESH_MS);
       }
     }
 
     function render(data){
-      const matches = Array.isArray(data.matches) ? data.matches : [];
-      matches.forEach(m => m.provider = 'esoccer');
-      currentMatches = matches;
-      const strong = matches.filter(m => !String(m.best_pick || '').startsWith('No Bet'));
-      const top = strong[0] || matches[0] || null;
-      $('updated').textContent = data.updated_at ? new Date(data.updated_at).toLocaleString('es-MX') : 'Sin hora';
-      $('fixtures').textContent = data.fixture_count || matches.length || 0;
-      $('strong').textContent = strong.length;
-      $('errors').textContent = (data.errors || []).length;
-      if(top) renderHero(top);
-      $('list').innerHTML = matches.length ? matches.map(card).join('') : '<div class="empty">Sin partidos cruzados con datos suficientes.</div>';
-    }
-
-    function renderBzzoiro(data){
       const events = Array.isArray(data.events) ? data.events : [];
-      events.forEach(m => m.provider = 'bzzoiro');
       currentMatches = events;
       const strong = events.filter(m => m.value_score >= 62 && m.recommendation !== 'No Bet');
       const top = strong[0] || events[0] || null;
@@ -160,18 +114,18 @@
       $('fixtures').textContent = data.event_count || events.length || 0;
       $('strong').textContent = strong.length;
       $('errors').textContent = (data.errors || []).length;
-      if(top) renderBzzHero(top);
+      if(top) renderHero(top);
       if(!data.configured){
         $('list').innerHTML = `<div class="empty">${esc((data.errors || ['Falta BZZOIRO_API_KEY'])[0])}</div>`;
         return;
       }
-      $('list').innerHTML = events.length ? events.map(bzzCard).join('') : '<div class="empty">BSD no devolvio eventos en vivo o por jugar.</div>';
+      $('list').innerHTML = events.length ? events.map(card).join('') : '<div class="empty">Bzzoiro no devolvio partidos en vivo o por jugar.</div>';
     }
 
-    function renderBzzHero(m){
+    function renderHero(m){
       $('homeName').textContent = m.home_team || 'Local';
       $('awayName').textContent = m.away_team || 'Visita';
-      $('homeMeta').textContent = `${esc(m.league || '')} - ${m.status || ''}`;
+      $('homeMeta').textContent = `${m.league || ''} - ${m.status || ''}`;
       $('awayMeta').textContent = m.model_version ? `Modelo ${m.model_version}` : 'BSD API';
       $('scoreBox').textContent = `${pct(m.probabilities?.home)} - ${pct(m.probabilities?.away)}`;
       $('expectedGoals').textContent = num(m.expected_goals?.total, 1);
@@ -179,7 +133,7 @@
       $('goalTrend').textContent = Math.round(m.value_score || 0);
       $('topPick').textContent = m.recommendation || 'No Bet';
       $('topMarket').textContent = `${m.best_market || 'Mercado'} - ${m.league || ''} - ${m.time || ''}`;
-      $('sourcePill').textContent = m.source_window === 'live' ? 'BSD en vivo' : 'BSD por jugar';
+      $('sourcePill').textContent = m.source_window === 'live' ? 'En vivo' : 'Por jugar';
       setGauge(m.value_score || 0);
       setTextPct('pHome', m.probabilities?.home);
       setTextPct('pDraw', m.probabilities?.draw);
@@ -189,7 +143,7 @@
       setBar('barU25','txtU25', m.probabilities?.under25);
     }
 
-    function bzzCard(m, index){
+    function card(m, index){
       const live = m.status === 'inprogress' || m.source_window === 'live';
       return `<article class="card">
         <div class="cardHead">
@@ -210,61 +164,11 @@
       </article>`;
     }
 
-    function renderHero(m){
-      $('homeName').textContent = m.home_player || 'Local';
-      $('awayName').textContent = m.away_player || 'Visita';
-      $('homeMeta').textContent = statsLine(m.home_stats);
-      $('awayMeta').textContent = statsLine(m.away_stats);
-      $('scoreBox').textContent = `${pct(m.probability_home)} - ${pct(m.probability_away)}`;
-      $('expectedGoals').textContent = num(m.expected_goals, 1);
-      $('drawRisk').textContent = pctScore(m.draw_risk_score);
-      $('goalTrend').textContent = num(m.goal_trend_score, 1);
-      $('topPick').textContent = m.best_pick || 'No Bet';
-      $('topMarket').textContent = `${m.best_market || 'Mercado'} - ${m.league || ''} - ${m.time || ''}`;
-      $('sourcePill').textContent = m.room || 'Datos reales';
-      setGauge(m.value_score || 0);
-      setTextPct('pHome', m.probability_home);
-      setTextPct('pDraw', m.probability_draw);
-      setTextPct('pAway', m.probability_away);
-      setBar('barO15','txtO15', m.probability_over15);
-      setBar('barO25','txtO25', m.probability_over25);
-      setBar('barU25','txtU25', m.probability_under25);
-    }
-
-    function card(m, index){
-      const good = !String(m.best_pick || '').startsWith('No Bet');
-      return `<article class="card">
-        <div class="cardHead">
-          <div><div class="cardTitle">${esc(m.home_player)} vs ${esc(m.away_player)}</div><div class="meta">${esc(m.league)} - ${esc(m.time)} - ${esc(m.room || 'fuente directa')}</div></div>
-          <div class="tag ${good ? 'good' : ''}">${esc(m.confidence || 'Baja')}</div>
-        </div>
-        <div class="cardBody">
-          <div class="betLine"><div><div class="market">${esc(m.best_market)}</div><b>${esc(m.best_pick)}</b></div><div class="value">${Math.round(m.value_score || 0)}</div></div>
-          <div class="miniGrid">
-            <div class="mini"><span>Local</span><b>${pct(m.probability_home)}</b></div>
-            <div class="mini"><span>Empate</span><b>${pct(m.probability_draw)}</b></div>
-            <div class="mini"><span>Visita</span><b>${pct(m.probability_away)}</b></div>
-            <div class="mini"><span>O/U 2.5</span><b>${pct(m.probability_over25)} / ${pct(m.probability_under25)}</b></div>
-          </div>
-          <div class="argument">${esc(m.argument || '')}</div>
-          <button class="analyzeBtn" type="button" onclick="openAnalysis(${index})">Analizar</button>
-        </div>
-      </article>`;
-    }
-
     function openAnalysis(index){
       const m = currentMatches[index];
       if(!m) return;
-      if(m.provider === 'bzzoiro'){
-        renderBzzHero(m);
-        $('modalTitle').textContent = `${m.home_team || 'Local'} vs ${m.away_team || 'Visita'}`;
-        $('modalBody').innerHTML = bzzAnalysisHtml(m);
-        $('analysisModal').classList.add('open');
-        document.body.style.overflow = 'hidden';
-        return;
-      }
       renderHero(m);
-      $('modalTitle').textContent = `${m.home_player || 'Local'} vs ${m.away_player || 'Visita'}`;
+      $('modalTitle').textContent = `${m.home_team || 'Local'} vs ${m.away_team || 'Visita'}`;
       $('modalBody').innerHTML = analysisHtml(m);
       $('analysisModal').classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -276,82 +180,12 @@
     }
 
     function analysisHtml(m){
-      const edge = (Number(m.winner_score_home)||0) - (Number(m.winner_score_away)||0);
-      const falseOver = Number(m.probability_over15) >= .7 && Number(m.probability_over25) < .55;
-      const drawRisk = Number(m.draw_risk_score)||0;
-      const h = m.home_stats || {};
-      const a = m.away_stats || {};
-      return `
-        <div class="analysisGrid">
-          <section class="analysisPanel">
-            <h3>Recomendacion</h3>
-            ${kv('Mercado', m.best_market || 'No Bet')}
-            ${kv('Pick', m.best_pick || 'No Bet')}
-            ${kv('Confianza', m.confidence || 'Baja')}
-            ${kv('Value score', Math.round(m.value_score || 0))}
-            ${kv('Fuente', m.room || 'Directa')}
-            ${kv('Liga', m.league || '')}
-          </section>
-          <section class="analysisPanel">
-            <h3>Probabilidades 1X2</h3>
-            ${kv('Local gana', pct(m.probability_home))}
-            ${kv('Empate', pct(m.probability_draw))}
-            ${kv('Visita gana', pct(m.probability_away))}
-            ${kv('Power local', num(m.winner_score_home,1))}
-            ${kv('Power visita', num(m.winner_score_away,1))}
-            ${kv('Edge', edge.toFixed(1))}
-          </section>
-          <section class="analysisPanel">
-            <h3>Goles</h3>
-            ${kv('Goles esperados', num(m.expected_goals,1))}
-            ${kv('Over 1.5', pct(m.probability_over15))}
-            ${kv('Over 2.5', pct(m.probability_over25))}
-            ${kv('Under 2.5', pct(m.probability_under25))}
-            ${kv('Goal trend', num(m.goal_trend_score,1))}
-            ${kv('Alerta falso over', falseOver ? 'Si' : 'No')}
-          </section>
-          <section class="analysisPanel">
-            <h3>Riesgo</h3>
-            ${kv('Draw risk', pctScore(drawRisk))}
-            ${kv('Riesgo modelo', m.risk || '')}
-            ${kv('Modo mercado', m.market_mode === 'ou_only' ? 'Solo O/U' : 'Solo 1X2')}
-            ${kv('Decision', decisionText(m))}
-            ${kv('Volatilidad', drawRisk >= 65 ? 'Alta' : drawRisk >= 50 ? 'Media' : 'Baja')}
-          </section>
-          <section class="analysisPanel">
-            <h3>${esc(m.home_player)} / ${esc(m.home_team || 'Equipo')}</h3>
-            ${kv('Equipo', m.home_team || '-')}
-            ${kv('Partidos muestra', h.games || 0)}
-            ${kv('Victorias', h.wins || 0)}
-            ${kv('Empates', h.draws || 0)}
-            ${kv('Goles a favor', num(h.gf,1))}
-            ${kv('Goles contra', num(h.ga,1))}
-            ${kv('Over 2.5 historico', pct(h.over25))}
-          </section>
-          <section class="analysisPanel">
-            <h3>${esc(m.away_player)} / ${esc(m.away_team || 'Equipo')}</h3>
-            ${kv('Equipo', m.away_team || '-')}
-            ${kv('Partidos muestra', a.games || 0)}
-            ${kv('Victorias', a.wins || 0)}
-            ${kv('Empates', a.draws || 0)}
-            ${kv('Goles a favor', num(a.gf,1))}
-            ${kv('Goles contra', num(a.ga,1))}
-            ${kv('Over 2.5 historico', pct(a.over25))}
-          </section>
-          <section class="analysisPanel wide">
-            <h3>Analisis completo</h3>
-            <div class="analysisText">${analysisText(m, falseOver, drawRisk, edge)}</div>
-          </section>
-        </div>`;
-    }
-
-    function bzzAnalysisHtml(m){
       const statsH = m.live_stats?.home || {};
       const statsA = m.live_stats?.away || {};
-      const markets = (m.odds_markets || []).filter(x => x.outcomes && x.outcomes.length).slice(0, 12);
+      const markets = (m.odds_markets || []).filter(x => x.outcomes && x.outcomes.length).slice(0, 14);
       return `<div class="analysisGrid">
         <section class="analysisPanel">
-          <h3>BSD Recomendacion</h3>
+          <h3>Recomendacion</h3>
           ${kv('Mercado', m.best_market || 'No Bet')}
           ${kv('Pick', m.recommendation || 'No Bet')}
           ${kv('Probabilidad', pct(m.best_probability))}
@@ -360,7 +194,7 @@
           ${kv('Book', m.best_odds ? m.best_odds.bookmaker : '-')}
         </section>
         <section class="analysisPanel">
-          <h3>Prediccion CatBoost</h3>
+          <h3>Prediccion BSD</h3>
           ${kv('Local gana', pct(m.probabilities?.home))}
           ${kv('Empate', pct(m.probabilities?.draw))}
           ${kv('Visita gana', pct(m.probabilities?.away))}
@@ -378,8 +212,8 @@
           ${kv('Over 3.5', pct(m.probabilities?.over35))}
         </section>
         <section class="analysisPanel">
-          <h3>En vivo / Contexto</h3>
-          ${kv('Estado', m.status || '-')}
+          <h3>Estado</h3>
+          ${kv('Status', m.status || '-')}
           ${kv('Minuto', m.current_minute || '-')}
           ${kv('Score', `${m.home_score ?? '-'} - ${m.away_score ?? '-'}`)}
           ${kv('WebSocket', m.live_websocket ? 'Disponible' : 'No')}
@@ -416,28 +250,14 @@
     }
 
     function marketRow(m){
-      const best = (m.outcomes || []).sort((a,b)=>b.decimal_odds-a.decimal_odds).slice(0,4).map(o => `${o.outcome}: ${o.decimal_odds} ${o.bookmaker}`).join(' | ');
+      const best = (m.outcomes || []).sort((a,b)=>b.decimal_odds-a.decimal_odds).slice(0,5).map(o => `${o.outcome}: ${o.decimal_odds} ${o.bookmaker}`).join(' | ');
       return `<div class="marketRow"><b>${esc(m.label || m.key)}</b><span>${esc(best)}</span></div>`;
     }
-
     function kv(label, value){return `<div class="kv"><span>${esc(label)}</span><b>${esc(value)}</b></div>`}
-    function decisionText(m){return String(m.best_pick || '').startsWith('No Bet') ? 'Evitar' : 'Pick fuerte'}
-    function analysisText(m, falseOver, drawRisk, edge){
-      const noBet = String(m.best_pick || '').startsWith('No Bet');
-      const marketRule = m.market_mode === 'ou_only' ? 'Esta liga se evalua solo en Over/Under, por regla del modelo.' : 'Esta liga se evalua solo en 1X2, por regla del modelo.';
-      const risk = drawRisk >= 65 ? 'El riesgo de empate es alto y reduce la confianza del 1X2.' : drawRisk >= 50 ? 'El riesgo de empate es moderado.' : 'El riesgo de empate esta controlado.';
-      const over = falseOver ? 'Over 1.5 sale alto, pero Over 2.5 no confirma fuerza suficiente; se evita perseguir goles sin edge.' : 'La curva de goles no marca contradiccion fuerte entre Over 1.5 y Over 2.5.';
-      const edgeText = edge > 0 ? `El local tiene ventaja de power score de ${edge.toFixed(1)} puntos.` : `La visita tiene ventaja de power score de ${Math.abs(edge).toFixed(1)} puntos.`;
-      const finalText = noBet ? 'Conclusion: No Bet porque el filtro de precision no encontro edge suficiente con los datos actuales.' : `Conclusion: ${m.best_pick} es la mejor jugada disponible por value, tendencia y riesgo.`;
-      return `${esc(m.argument || '')}<br><br>${marketRule} ${edgeText} ${risk} ${over}<br><br>${finalText}`;
-    }
-
     function setGauge(v){const n = Math.max(0, Math.min(100, Number(v)||0)); $('gauge').style.setProperty('--p', n); $('gaugePct').textContent = Math.round(n) + '%'}
     function setBar(id,txt,value){const n = Math.max(0, Math.min(1, Number(value)||0)); $(id).style.width = Math.round(n*100) + '%'; $(txt).textContent = Math.round(n*100) + '%'}
     function setTextPct(id,value){$(id).textContent = pct(value)}
-    function statsLine(s){return s ? `${num(s.gf,1)} GF - ${num(s.ga,1)} GA - ${s.games || 0} PJ` : 'Sin stats'}
     function pct(v){return Math.round((Number(v)||0)*100) + '%'}
-    function pctScore(v){return Math.round(Number(v)||0) + '%'}
     function num(v,d){return (Number(v)||0).toFixed(d)}
     function esc(s){return String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
   </script>

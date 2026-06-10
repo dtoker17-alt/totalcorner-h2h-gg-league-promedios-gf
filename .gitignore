@@ -9,5 +9,6 @@ data/*.xlsx
 data/odds.csv
 
 .netlify/
+.codex-remote-attachments/
 node_modules/
 npm-debug.log*

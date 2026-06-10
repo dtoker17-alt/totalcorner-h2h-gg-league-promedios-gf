@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+data/*.log
+data/*.xlsx
+data/odds.csv
+
+.netlify/
+node_modules/
+npm-debug.log*

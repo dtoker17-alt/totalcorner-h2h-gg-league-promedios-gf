@@ -45,7 +45,7 @@ exports.handler = async (event) => {
   ];
   const unique = dedupe(rawEvents).slice(0, limit);
   const enriched = await Promise.all(unique.map((item) => enrichEvent(item, predictionByEvent.get(Number(item.id)), api)));
-  const events = enriched.map(analyzeEvent).sort((a, b) => (b.value_score || 0) - (a.value_score || 0));
+  const events = enriched.map(analyzeEvent).sort((a, b) => (b.professional_score || b.value_score || 0) - (a.professional_score || a.value_score || 0));
 
   return json(200, {
     mode: "bzzoiro-v2",
@@ -99,7 +99,7 @@ function analyzeEvent(event) {
   const btts = p.btts || {};
   const score = p.score || {};
   const oddsMarkets = flattenMarkets(event.odds?.markets || {});
-  const best = chooseBestMarket({ match, goals, ou, btts, rec, oddsMarkets, status: event.status });
+  const best = chooseBestMarket({ match, goals, ou, btts, rec, oddsMarkets, status: event.status, modelConfidence: event.prediction?.model?.confidence });
   const statHome = event.stats?.stats?.home || null;
   const statAway = event.stats?.stats?.away || null;
   const facts = event.metadata?.funfacts?.map((item) => item.sentence).filter(Boolean).slice(0, 4) || [];
@@ -144,6 +144,15 @@ function analyzeEvent(event) {
     best_probability: best.probability,
     best_odds: best.odds,
     edge: best.edge,
+    expected_value: best.expected_value,
+    fair_odds: best.fair_odds,
+    market_probability: best.market_probability,
+    kelly_fraction: best.kelly_fraction,
+    suggested_stake_units: best.suggested_stake_units,
+    risk_score: best.risk_score,
+    risk_level: best.risk_level,
+    risk_flags: best.risk_flags,
+    professional_score: best.professional_score,
     value_score: best.value_score,
     confidence: best.confidence,
     odds_markets: oddsMarkets,
@@ -156,31 +165,76 @@ function analyzeEvent(event) {
   };
 }
 
-function chooseBestMarket({ match, ou, btts, oddsMarkets }) {
+function chooseBestMarket({ match, ou, btts, oddsMarkets, modelConfidence }) {
   const candidates = [];
-  addCandidate(candidates, "1X2", "Local gana", probToUnit(match.prob_home), bestOdd(oddsMarkets, "1x2", "HOME"));
-  addCandidate(candidates, "1X2", "Empate", probToUnit(match.prob_draw), bestOdd(oddsMarkets, "1x2", "DRAW"));
-  addCandidate(candidates, "1X2", "Visita gana", probToUnit(match.prob_away), bestOdd(oddsMarkets, "1x2", "AWAY"));
-  addCandidate(candidates, "Over/Under 1.5", "Over 1.5", probToUnit(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "over"));
-  addCandidate(candidates, "Over/Under 1.5", "Under 1.5", inverseProb(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "under"));
-  addCandidate(candidates, "Over/Under 2.5", "Over 2.5", probToUnit(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "over"));
-  addCandidate(candidates, "Over/Under 2.5", "Under 2.5", inverseProb(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "under"));
-  addCandidate(candidates, "Over/Under 3.5", "Over 3.5", probToUnit(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "over"));
-  addCandidate(candidates, "Over/Under 3.5", "Under 3.5", inverseProb(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "under"));
-  addCandidate(candidates, "BTTS", "Ambos anotan Si", probToUnit(btts.prob_yes), bestOdd(oddsMarkets, "btts", "yes"));
-  addCandidate(candidates, "BTTS", "Ambos anotan No", inverseProb(btts.prob_yes), bestOdd(oddsMarkets, "btts", "no"));
+  addCandidate(candidates, oddsMarkets, "1x2", "1X2", "HOME", "Local gana", probToUnit(match.prob_home), bestOdd(oddsMarkets, "1x2", "HOME"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "1x2", "1X2", "DRAW", "Empate", probToUnit(match.prob_draw), bestOdd(oddsMarkets, "1x2", "DRAW"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "1x2", "1X2", "AWAY", "Visita gana", probToUnit(match.prob_away), bestOdd(oddsMarkets, "1x2", "AWAY"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_15", "Over/Under 1.5", "over", "Over 1.5", probToUnit(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "over"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_15", "Over/Under 1.5", "under", "Under 1.5", inverseProb(ou.prob_over_15), bestOdd(oddsMarkets, "over_under_15", "under"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_25", "Over/Under 2.5", "over", "Over 2.5", probToUnit(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "over"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_25", "Over/Under 2.5", "under", "Under 2.5", inverseProb(ou.prob_over_25), bestOdd(oddsMarkets, "over_under_25", "under"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_35", "Over/Under 3.5", "over", "Over 3.5", probToUnit(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "over"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "over_under_35", "Over/Under 3.5", "under", "Under 3.5", inverseProb(ou.prob_over_35), bestOdd(oddsMarkets, "over_under_35", "under"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "btts", "BTTS", "yes", "Ambos anotan Si", probToUnit(btts.prob_yes), bestOdd(oddsMarkets, "btts", "yes"), modelConfidence);
+  addCandidate(candidates, oddsMarkets, "btts", "BTTS", "no", "Ambos anotan No", inverseProb(btts.prob_yes), bestOdd(oddsMarkets, "btts", "no"), modelConfidence);
   const valid = candidates.filter((item) => item.probability > 0);
-  return valid.sort((a, b) => b.value_score - a.value_score)[0] || { market: "No Bet", pick: "No Bet", probability: 0, odds: null, edge: 0, value_score: 0, confidence: "Baja" };
+  return valid.sort((a, b) => b.professional_score - a.professional_score)[0] || noBet();
 }
 
-function addCandidate(out, market, pick, probability, odds) {
-  if (!Number.isFinite(probability) || probability <= 0) return;
+function addCandidate(out, oddsMarkets, marketKey, market, outcome, pick, modelProbability, odds, modelConfidence) {
+  if (!Number.isFinite(modelProbability) || modelProbability <= 0) return;
+  const marketProb = noVigProbability(oddsMarkets, marketKey, outcome);
+  const probability = marketProb == null ? modelProbability : (modelProbability * 0.68) + (marketProb * 0.32);
   const implied = odds?.decimal_odds ? 1 / odds.decimal_odds : null;
   const edge = implied == null ? 0 : probability - implied;
-  const value_score = implied == null
-    ? Math.max(0, Math.min(58, probability * 70))
-    : Math.max(0, Math.min(100, probability * 60 + Math.max(0, edge) * 160 + 10));
-  out.push({ market, pick, probability: round3(probability), odds, edge: round3(edge), value_score: round1(value_score), confidence: value_score >= 74 ? "Alta" : value_score >= 62 ? "Media" : "Baja" });
+  const ev = odds?.decimal_odds ? probability * odds.decimal_odds - 1 : null;
+  const fairOdds = probability > 0 ? 1 / probability : null;
+  const rawKelly = ev && ev > 0 && odds?.decimal_odds > 1 ? ev / (odds.decimal_odds - 1) : 0;
+  const kelly = Math.max(0, Math.min(0.25, rawKelly));
+  const suggestedStake = odds?.decimal_odds ? Math.max(0, Math.min(0.05, kelly * 0.25)) : 0;
+  const gap = marketProb == null ? 0 : Math.abs(modelProbability - marketProb);
+  const riskFlags = [];
+  if (!odds) riskFlags.push("Sin cuota: solo probabilidad, no value real");
+  if (odds && ev <= 0) riskFlags.push("EV negativo");
+  if (odds && edge < 0.03) riskFlags.push("Edge bajo");
+  if (gap >= 0.22) riskFlags.push("Modelo contradice fuerte al mercado");
+  if (odds?.decimal_odds >= 7 && probability < 0.5) riskFlags.push("Cuota alta con volatilidad elevada");
+  if ((odds?.odds_count || 0) <= 1) riskFlags.push("Poca profundidad de casas");
+  if ((modelConfidence ?? 0) > 0 && modelConfidence < 0.55) riskFlags.push("Confianza BSD baja");
+
+  let score = odds
+    ? 38 + probability * 24 + Math.max(0, edge) * 210 + Math.max(0, ev || 0) * 55 + suggestedStake * 10
+    : probability * 70;
+  score -= Math.min(28, riskFlags.length * 6 + (gap >= 0.22 ? 8 : 0));
+  if (!odds) score = Math.min(score, 54);
+  if (odds && ev <= 0) score = Math.min(score, 49);
+  if (odds && edge < 0.03) score = Math.min(score, 58);
+  if (gap >= 0.22) score = Math.min(score, 64);
+  const professionalScore = Math.max(0, Math.min(100, score));
+  const riskScore = Math.max(0, Math.min(100, riskFlags.length * 16 + (gap * 90) + (odds ? 0 : 30)));
+  out.push({
+    market,
+    market_key: marketKey,
+    outcome,
+    pick,
+    probability: round3(probability),
+    model_probability: round3(modelProbability),
+    market_probability: marketProb == null ? null : round3(marketProb),
+    odds,
+    implied_probability: implied == null ? null : round3(implied),
+    edge: round3(edge),
+    expected_value: ev == null ? null : round3(ev),
+    fair_odds: fairOdds == null ? null : round2(fairOdds),
+    kelly_fraction: round3(kelly),
+    suggested_stake_units: round2(suggestedStake),
+    risk_score: round1(riskScore),
+    risk_level: riskScore >= 62 ? "Alto" : riskScore >= 34 ? "Medio" : "Bajo",
+    risk_flags: riskFlags,
+    professional_score: round1(professionalScore),
+    value_score: round1(professionalScore),
+    confidence: professionalScore >= 76 && riskScore < 45 ? "Alta" : professionalScore >= 62 && riskScore < 68 ? "Media" : "Baja",
+  });
 }
 
 function flattenMarkets(markets) {
@@ -222,8 +276,29 @@ function flattenMarkets(markets) {
 }
 
 function bestOdd(markets, market, outcome) {
-  const rows = markets.find((item) => item.key === market)?.outcomes.filter((item) => item.outcome === outcome) || [];
-  return rows.sort((a, b) => b.decimal_odds - a.decimal_odds)[0] || null;
+  const marketRow = markets.find((item) => item.key === market);
+  const rows = marketRow?.outcomes.filter((item) => item.outcome === outcome) || [];
+  const best = rows.sort((a, b) => b.decimal_odds - a.decimal_odds)[0] || null;
+  return best ? { ...best, odds_count: rows.length, market_outcome_count: marketRow?.outcomes?.length || rows.length } : null;
+}
+
+function noVigProbability(markets, market, outcome) {
+  const rows = markets.find((item) => item.key === market)?.outcomes || [];
+  const bestByOutcome = new Map();
+  for (const row of rows) {
+    if (!row.decimal_odds || row.decimal_odds <= 1) continue;
+    const current = bestByOutcome.get(row.outcome);
+    if (!current || row.decimal_odds > current) bestByOutcome.set(row.outcome, row.decimal_odds);
+  }
+  const odds = bestByOutcome.get(outcome);
+  if (!odds) return null;
+  const implied = [...bestByOutcome.values()].map((value) => 1 / value);
+  const total = implied.reduce((sum, value) => sum + value, 0);
+  return total > 0 ? (1 / odds) / total : null;
+}
+
+function noBet() {
+  return { market: "No Bet", pick: "No Bet", probability: 0, odds: null, edge: 0, expected_value: null, fair_odds: null, market_probability: null, kelly_fraction: 0, suggested_stake_units: 0, risk_score: 100, risk_level: "Alto", risk_flags: ["Sin mercado fiable"], professional_score: 0, value_score: 0, confidence: "Baja" };
 }
 
 function latestUpdated(bookmakers) {
@@ -250,10 +325,11 @@ function buildAnalysis(event, best, ctx) {
   const live = event.status === "inprogress" ? `Partido en vivo minuto ${event.current_minute || "?"}.` : "Partido por jugar.";
   const model = event.prediction?.model ? `Modelo BSD ${event.prediction.model.version || ""}, confianza ${Math.round((event.prediction.model.confidence || 0) * 100)}%.` : "Sin prediccion BSD disponible para este evento.";
   const goals = ctx.goals ? `Goles esperados ${toNum(ctx.goals.home).toFixed(2)}-${toNum(ctx.goals.away).toFixed(2)}, marcador probable ${ctx.score?.most_likely || "sin dato"}.` : "";
-  const odds = best.odds ? `Mejor cuota ${best.odds.decimal_odds} en ${best.odds.bookmaker || "book"}. Edge estimado ${Math.round(best.edge * 100)} puntos.` : "Sin cuota disponible para confirmar value.";
+  const odds = best.odds ? `Mejor cuota ${best.odds.decimal_odds} en ${best.odds.bookmaker || "book"}. EV ${best.expected_value == null ? "-" : Math.round(best.expected_value * 100) + "%"}, edge ${Math.round(best.edge * 100)} puntos, Kelly sugerido ${Math.round((best.suggested_stake_units || 0) * 100)}% de una unidad.` : "Sin cuota disponible para confirmar value.";
+  const risk = best.risk_flags?.length ? `Alertas: ${best.risk_flags.join("; ")}.` : `Riesgo ${best.risk_level}.`;
   const stat = ctx.statHome || ctx.statAway ? `Live stats: tiros ${ctx.statHome?.total_shots ?? "-"}-${ctx.statAway?.total_shots ?? "-"}, ataques peligrosos ${ctx.statHome?.dangerous_attack ?? "-"}-${ctx.statAway?.dangerous_attack ?? "-"}.` : "Sin live stats avanzadas en este momento.";
   const facts = ctx.facts?.length ? `Factores: ${ctx.facts.join(" ")}` : "";
-  return `${live} ${model} Mejor mercado: ${best.pick} (${best.market}) con probabilidad ${Math.round(best.probability * 100)}% y value ${best.value_score}. ${odds} ${goals} ${stat} ${facts}`.trim();
+  return `${live} ${model} Mejor mercado: ${best.pick} (${best.market}) con probabilidad ajustada ${Math.round(best.probability * 100)}%, score profesional ${best.professional_score}. ${odds} ${risk} ${goals} ${stat} ${facts}`.trim();
 }
 
 function normalizeStats(s) {
@@ -290,6 +366,7 @@ function inverseProb(value) {
 }
 function toNum(value) { const n = Number(value); return Number.isFinite(n) ? n : 0; }
 function round1(n) { return Math.round((Number(n) || 0) * 10) / 10; }
+function round2(n) { return Math.round((Number(n) || 0) * 100) / 100; }
 function round3(n) { return Math.round((Number(n) || 0) * 1000) / 1000; }
 function clampInt(value, fallback, min, max) { const n = Number.parseInt(value, 10); return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback; }
 function mxTime(iso) { return iso ? new Date(iso).toLocaleTimeString("es-MX", { timeZone: "America/Mexico_City", hour: "2-digit", minute: "2-digit", hour12: false }) : ""; }

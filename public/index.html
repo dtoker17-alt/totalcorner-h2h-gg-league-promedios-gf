@@ -16,8 +16,9 @@
     .bar{display:grid;grid-template-columns:68px minmax(0,1fr) 42px;gap:8px;align-items:center;margin:8px 0;font-size:11px;color:#c9d1e3}.track{height:8px;border-radius:999px;background:#242d43;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
     .summary{margin:10px 0}.performance{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr);gap:10px;margin:10px 0}.perfMain{padding:12px}.perfRate{font-size:36px;font-weight:950;line-height:1;color:var(--green)}.perfSub{margin-top:6px;color:var(--muted);font-size:12px}.perfGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}.perfBox{border:1px solid #2a344f;border-radius:8px;background:#0f1423;padding:8px}.perfBox span{display:block;color:var(--muted);font-size:10px}.perfBox b{display:block;margin-top:4px;font-size:16px}.historyList{padding:10px;max-height:238px;overflow:auto}.historyItem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:8px 0;border-bottom:1px solid #202a40}.historyItem:last-child{border-bottom:0}.historyItem b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.historyItem span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.result{border-radius:999px;padding:4px 7px;font-size:10px;font-weight:950}.won{background:#143b2b;color:#87ffc4}.lost{background:#41202a;color:#ff9aac}.pending{background:#26324f;color:#d6def3}.matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}.card{min-width:0;border:1px solid var(--line);border-radius:8px;background:#111722;overflow:hidden}.cardHead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px;border-bottom:1px solid #26304a}.cardTitle{min-width:0;font-size:14px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tag{align-self:start;border-radius:999px;padding:5px 7px;background:#22304c;color:#cdd7ee;font-size:10px;font-weight:900;white-space:nowrap}.tag.good{background:#143b2b;color:#87ffc4}.cardBody{padding:10px}.betLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.betLine b{font-size:18px;overflow-wrap:anywhere}.value{color:var(--green);font-size:20px;font-weight:950}.miniGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{min-width:0;border:1px solid #29334d;border-radius:8px;background:#0f1423;padding:7px}.mini span{display:block;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini b{display:block;margin-top:3px;font-size:14px}.argument{margin-top:9px;color:#b8c0d4;font-size:11px;line-height:1.35;overflow-wrap:anywhere}.analyzeBtn{width:100%;height:36px;margin-top:10px;border:1px solid #345070;border-radius:8px;background:#182946;color:#e8f1ff;font-weight:900}.savedNote{margin-top:7px;color:var(--muted);font-size:10px}.empty{padding:34px 12px;text-align:center;color:var(--muted)}
     .modal{position:fixed;inset:0;z-index:20;display:none;background:#02040acc;padding:10px;overflow:auto}.modal.open{display:block}.sheet{width:min(900px,100%);margin:0 auto;border:1px solid #34405c;border-radius:8px;background:#0d1220;box-shadow:0 20px 70px #000;overflow:hidden}.sheetTop{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:12px;background:#10182a;border-bottom:1px solid #28334f}.sheetTitle{min-width:0;font-size:16px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.closeBtn{width:38px;height:38px;border:1px solid #35425f;border-radius:8px;background:#171f32;color:#fff;font-size:20px}.sheetBody{padding:10px}.analysisGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analysisPanel{min-width:0;border:1px solid #293650;border-radius:8px;background:#111827;padding:10px}.analysisPanel h3{margin:0 0 8px;font-size:13px}.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0;border-bottom:1px solid #202a40;font-size:12px}.kv:last-child{border-bottom:0}.kv span{min-width:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kv b{text-align:right;white-space:nowrap}.wide{grid-column:1/-1}.analysisText{color:#c4ccdf;font-size:12px;line-height:1.5;overflow-wrap:anywhere}.marketList{display:grid;gap:7px}.marketRow{border:1px solid #293650;border-radius:8px;background:#0f1423;padding:8px;font-size:11px}.marketRow b{display:block;margin-bottom:4px}.marketRow span{color:#b9c3d8;overflow-wrap:anywhere}
+    .risk{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.risk i{font-style:normal;border-radius:999px;border:1px solid #33405f;padding:4px 6px;color:#cbd5ea;font-size:10px}.risk .bad{border-color:#653142;color:#ff9aac}
     @media(max-width:720px){.app{padding:8px 8px 18px}.topbar{margin:0 -8px 8px;padding:7px 8px}.topline{grid-template-columns:minmax(0,1fr) auto auto}.status{display:none}.hero,.performance{grid-template-columns:1fr}.pitch{height:148px}.statsRow,.summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat,.tile{padding:8px}.stat b,.tile b{font-size:16px}.side{grid-template-columns:1fr}.recommend{display:grid;grid-template-columns:minmax(0,1fr) 116px;gap:8px;align-items:center}.recommend .sectionTitle{grid-column:1/-1}.gauge{width:112px;height:112px;margin:0}.gaugeInner{width:80px;height:80px}.probGrid{grid-column:1/-1}.matches{grid-template-columns:1fr}.score{font-size:19px;padding:7px 9px}.pickBig{font-size:20px}.brand b{font-size:13px}.analysisGrid{grid-template-columns:1fr}.modal{padding:6px}.sheetBody{padding:8px}}
-    @media(max-width:390px){.team{padding:7px}.name{font-size:12px}.score{font-size:16px}.statsRow,.summary{grid-template-columns:1fr 1fr}.probGrid{grid-template-columns:1fr 1fr 1fr}.bar{grid-template-columns:58px minmax(0,1fr) 36px}.refresh{width:38px;min-width:38px;padding:0}.status{padding:7px 9px}}
+    @media(max-width:430px){.topline{grid-template-columns:minmax(0,1fr) 48px 34px}.team{padding:7px}.name{font-size:12px}.scoreline{grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr);gap:6px}.score{font-size:16px}.statsRow,.summary{grid-template-columns:1fr 1fr}.probGrid{grid-template-columns:1fr 1fr 1fr}.recommend{grid-template-columns:minmax(0,1fr) 88px}.gauge{width:86px;height:86px}.gaugeInner{width:62px;height:62px}.gaugeInner b{font-size:18px}.bar{grid-template-columns:58px minmax(0,1fr) 36px}.refresh{width:34px;min-width:34px;padding:0}.settleBtn{width:48px;min-width:48px;padding:0;font-size:0}.settleBtn:before{content:"Liq.";font-size:11px}.status{padding:7px 9px}}
   </style>
 </head>
 <body>
@@ -56,7 +57,7 @@
           </div>
         </div>
         <div class="panel bars">
-          <div class="sectionTitle">Goles <span class="pill">CatBoost + odds</span></div>
+          <div class="sectionTitle">Goles <span class="pill">BSD + odds</span></div>
           <div class="bar"><span>Over 1.5</span><div class="track"><div class="fill" id="barO15"></div></div><b id="txtO15">0%</b></div>
           <div class="bar"><span>Over 2.5</span><div class="track"><div class="fill" id="barO25"></div></div><b id="txtO25">0%</b></div>
           <div class="bar"><span>Under 2.5</span><div class="track"><div class="fill" id="barU25"></div></div><b id="txtU25">0%</b></div>
@@ -130,7 +131,7 @@
     function render(data){
       const events = Array.isArray(data.events) ? data.events : [];
       currentMatches = events;
-      const strong = events.filter(m => m.value_score >= 62 && m.recommendation !== 'No Bet');
+      const strong = events.filter(m => (m.professional_score || m.value_score) >= 62 && m.recommendation !== 'No Bet');
       const top = strong[0] || events[0] || null;
       $('updated').textContent = data.updated_at ? new Date(data.updated_at).toLocaleString('es-MX') : 'BSD sin hora';
       $('fixtures').textContent = data.event_count || events.length || 0;
@@ -152,11 +153,11 @@
       $('scoreBox').textContent = `${pct(m.probabilities?.home)} - ${pct(m.probabilities?.away)}`;
       $('expectedGoals').textContent = num(m.expected_goals?.total, 1);
       $('drawRisk').textContent = pct(m.probabilities?.draw);
-      $('goalTrend').textContent = Math.round(m.value_score || 0);
+      $('goalTrend').textContent = Math.round(m.professional_score || m.value_score || 0);
       $('topPick').textContent = m.recommendation || 'No Bet';
       $('topMarket').textContent = `${m.best_market || 'Mercado'} - ${m.league || ''} - ${m.time || ''}`;
       $('sourcePill').textContent = m.source_window === 'live' ? 'En vivo' : 'Por jugar';
-      setGauge(m.value_score || 0);
+      setGauge(m.professional_score || m.value_score || 0);
       setTextPct('pHome', m.probabilities?.home);
       setTextPct('pDraw', m.probabilities?.draw);
       setTextPct('pAway', m.probabilities?.away);
@@ -170,16 +171,17 @@
       return `<article class="card">
         <div class="cardHead">
           <div><div class="cardTitle">${esc(m.home_team)} vs ${esc(m.away_team)}</div><div class="meta">${esc(m.league)} - ${esc(m.time)} - ${live ? 'En vivo' : 'Por jugar'}</div></div>
-          <div class="tag ${m.value_score >= 62 ? 'good' : ''}">${esc(m.confidence || 'Baja')}</div>
+          <div class="tag ${(m.professional_score || m.value_score) >= 62 ? 'good' : ''}">${esc(m.confidence || 'Baja')}</div>
         </div>
         <div class="cardBody">
-          <div class="betLine"><div><div class="market">${esc(m.best_market)}</div><b>${esc(m.recommendation)}</b></div><div class="value">${Math.round(m.value_score || 0)}</div></div>
+          <div class="betLine"><div><div class="market">${esc(m.best_market)}</div><b>${esc(m.recommendation)}</b></div><div class="value">${Math.round(m.professional_score || m.value_score || 0)}</div></div>
           <div class="miniGrid">
-            <div class="mini"><span>Local</span><b>${pct(m.probabilities?.home)}</b></div>
-            <div class="mini"><span>Empate</span><b>${pct(m.probabilities?.draw)}</b></div>
-            <div class="mini"><span>Visita</span><b>${pct(m.probabilities?.away)}</b></div>
+            <div class="mini"><span>Prob. ajustada</span><b>${pct(m.best_probability)}</b></div>
+            <div class="mini"><span>EV</span><b>${signedPct(m.expected_value)}</b></div>
+            <div class="mini"><span>Kelly</span><b>${pct(m.suggested_stake_units)}</b></div>
             <div class="mini"><span>Cuota</span><b>${m.best_odds ? esc(m.best_odds.decimal_odds) : '-'}</b></div>
           </div>
+          <div class="risk">${riskPills(m)}</div>
           <div class="argument">${esc(m.analysis || '')}</div>
           <button class="analyzeBtn" type="button" onclick="openAnalysis(${index})">Analizar</button>
         </div>
@@ -277,9 +279,13 @@
           ${kv('Mercado', m.best_market || 'No Bet')}
           ${kv('Pick', m.recommendation || 'No Bet')}
           ${kv('Probabilidad', pct(m.best_probability))}
-          ${kv('Value score', Math.round(m.value_score || 0))}
+          ${kv('Score profesional', Math.round(m.professional_score || m.value_score || 0))}
           ${kv('Cuota', m.best_odds ? m.best_odds.decimal_odds : '-')}
           ${kv('Book', m.best_odds ? m.best_odds.bookmaker : '-')}
+          ${kv('Cuota justa', m.fair_odds || '-')}
+          ${kv('Prob. mercado', m.market_probability == null ? '-' : pct(m.market_probability))}
+          ${kv('EV', signedPct(m.expected_value))}
+          ${kv('Kelly sugerido', pct(m.suggested_stake_units))}
         </section>
         <section class="analysisPanel">
           <h3>Prediccion BSD</h3>
@@ -307,6 +313,8 @@
           ${kv('WebSocket', m.live_websocket ? 'Disponible' : 'No')}
           ${kv('Lineups', m.lineup_status || 'unavailable')}
           ${kv('Ventana', m.source_window || '-')}
+          ${kv('Riesgo', m.risk_level || '-')}
+          ${kv('Risk score', m.risk_score == null ? '-' : Math.round(m.risk_score))}
         </section>
         <section class="analysisPanel">
           <h3>Live stats local</h3>
@@ -327,6 +335,10 @@
           ${kv('xG live', statsA.xg ?? '-')}
         </section>
         <section class="analysisPanel wide">
+          <h3>Control de riesgo</h3>
+          <div class="risk">${riskPills(m)}</div>
+        </section>
+        <section class="analysisPanel wide">
           <h3>Mercados disponibles</h3>
           <div class="marketList">${markets.length ? markets.map(marketRow).join('') : '<div class="analysisText">Sin odds para este evento todavia.</div>'}</div>
         </section>
@@ -341,11 +353,16 @@
       const best = (m.outcomes || []).sort((a,b)=>b.decimal_odds-a.decimal_odds).slice(0,5).map(o => `${o.outcome}: ${o.decimal_odds} ${o.bookmaker}`).join(' | ');
       return `<div class="marketRow"><b>${esc(m.label || m.key)}</b><span>${esc(best)}</span></div>`;
     }
+    function riskPills(m){
+      const flags = Array.isArray(m.risk_flags) && m.risk_flags.length ? m.risk_flags : [`Riesgo ${m.risk_level || 'Medio'}`];
+      return flags.slice(0,4).map(flag => `<i class="${String(flag).includes('EV negativo') || String(flag).includes('contradice') ? 'bad' : ''}">${esc(flag)}</i>`).join('');
+    }
     function kv(label, value){return `<div class="kv"><span>${esc(label)}</span><b>${esc(value)}</b></div>`}
     function setGauge(v){const n = Math.max(0, Math.min(100, Number(v)||0)); $('gauge').style.setProperty('--p', n); $('gaugePct').textContent = Math.round(n) + '%'}
     function setBar(id,txt,value){const n = Math.max(0, Math.min(1, Number(value)||0)); $(id).style.width = Math.round(n*100) + '%'; $(txt).textContent = Math.round(n*100) + '%'}
     function setTextPct(id,value){$(id).textContent = pct(value)}
     function pct(v){return Math.round((Number(v)||0)*100) + '%'}
+    function signedPct(v){return v == null ? '-' : (Number(v) >= 0 ? '+' : '') + Math.round(Number(v)*100) + '%'}
     function num(v,d){return (Number(v)||0).toFixed(d)}
     function esc(s){return String(s ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
   </script>

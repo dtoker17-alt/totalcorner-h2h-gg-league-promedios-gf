@@ -53,6 +53,20 @@ El analisis cubre los mercados que BSD entrega para cada evento:
 
 La recomendacion final combina probabilidad BSD, cuotas reales, edge estimado, estado en vivo, estadisticas, alineaciones y factores contextuales disponibles.
 
+## Motor profesional
+
+El ranking de picks aplica criterios usados en modelos de betting profesionales:
+
+- Probabilidad de mercado sin margen (`no-vig`) calculada desde las mejores cuotas disponibles.
+- Probabilidad ajustada = mezcla entre prediccion BSD y senal del mercado.
+- `expected_value` = probabilidad ajustada * cuota - 1.
+- `edge` = probabilidad ajustada - probabilidad implicita de la cuota.
+- `fair_odds` para comparar si la cuota ofrecida esta cara o barata.
+- Kelly fraccional y limitado para sugerir stake conservador.
+- Penalizaciones por EV negativo, edge bajo, baja profundidad de casas, baja confianza BSD y contradiccion fuerte entre modelo y mercado.
+
+El sistema no considera un pick fuerte solo por probabilidad alta. Debe tener EV positivo, edge razonable, cuota disponible y riesgo controlado.
+
 ## Historial y liquidacion
 
 Cada vez que se abre `Analizar` en un partido, la app guarda el snapshot del pick en Netlify Blobs:
@@ -62,7 +76,11 @@ Cada vez que se abre `Analizar` en un partido, la app guarda el snapshot del pic
 - pick
 - probabilidad
 - cuota
-- value
+- value / score profesional
+- EV
+- edge
+- Kelly sugerido
+- riesgo
 - analisis
 
 El boton `Liquidar` consulta de nuevo Bzzoiro por evento y marca cada pick como `WON`, `LOST`, `VOID` o `PENDING`. El dashboard muestra win rate, ganadas, perdidas, pendientes y ROI en unidades.

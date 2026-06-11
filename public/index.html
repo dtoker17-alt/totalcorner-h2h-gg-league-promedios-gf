@@ -99,6 +99,7 @@
   <script>
     const $ = id => document.getElementById(id);
     const REFRESH_MS = 60000;
+    const AUTO_SETTLE_MS = 10 * 60 * 1000;
     let timer;
     let currentMatches = [];
     $('refresh').onclick = () => load();
@@ -109,6 +110,7 @@
     window.addEventListener('load', () => {
       load();
       loadHistory();
+      autoSettleHistory();
     });
 
     async function load(){
@@ -121,6 +123,7 @@
         if(!data) throw new Error('Respuesta vacia');
         render(data);
         loadHistory();
+        autoSettleHistory();
         $('liveState').textContent = data.configured === false ? 'Sin token' : 'Activo';
       }catch(err){
         $('liveState').textContent = 'Error';
@@ -247,6 +250,23 @@
       }finally{
         $('settleBtn').disabled = false;
         $('settleBtn').textContent = 'Liquidar';
+      }
+    }
+
+    async function autoSettleHistory(){
+      const last = Number(localStorage.getItem('lastAutoSettle') || 0);
+      if(Date.now() - last < AUTO_SETTLE_MS) return;
+      localStorage.setItem('lastAutoSettle', String(Date.now()));
+      try{
+        const data = await fetch('/api/picks', {
+          method:'POST',
+          headers:{'content-type':'application/json'},
+          body:JSON.stringify({action:'settle'})
+        }).then(r => r.json());
+        if(data.summary) renderHistory(data);
+        $('historyStatus').textContent = data.settled ? `Auto ${data.settled}` : 'Auto OK';
+      }catch(err){
+        $('historyStatus').textContent = 'Auto pendiente';
       }
     }
 

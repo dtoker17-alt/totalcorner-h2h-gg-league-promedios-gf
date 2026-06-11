@@ -5,6 +5,9 @@
 [functions]
   node_bundler = "esbuild"
 
+[functions."auto-settle"]
+  schedule = "*/10 * * * *"
+
 [[redirects]]
   from = "/api/bzzoiro"
   to = "/.netlify/functions/bzzoiro"
@@ -13,4 +16,9 @@
 [[redirects]]
   from = "/api/picks"
   to = "/.netlify/functions/picks"
+  status = 200
+
+[[redirects]]
+  from = "/api/auto-settle"
+  to = "/.netlify/functions/auto-settle"
   status = 200

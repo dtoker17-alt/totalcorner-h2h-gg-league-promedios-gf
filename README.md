@@ -84,3 +84,8 @@ Cada vez que se abre `Analizar` en un partido, la app guarda el snapshot del pic
 - analisis
 
 El boton `Liquidar` consulta de nuevo Bzzoiro por evento y marca cada pick como `WON`, `LOST`, `VOID` o `PENDING`. El dashboard muestra win rate, ganadas, perdidas, pendientes y ROI en unidades.
+
+La liquidacion tambien corre automaticamente:
+
+- Netlify ejecuta `auto-settle` cada 10 minutos.
+- La web intenta liquidar en silencio al cargar o actualizar si pasaron 10 minutos desde la ultima revision.
